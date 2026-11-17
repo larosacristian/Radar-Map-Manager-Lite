@@ -1,0 +1,64 @@
+# Radar Map Manager Lite for Home Assistant
+
+An ESPHome-first, local-only adaptation of [Radar Map Manager](https://github.com/Moe8383/radar_map_manager).
+
+It combines radar targets on an interactive room map and exposes virtual occupancy zones for Home Assistant automations. Use one or multiple radar modules, including HLK-LD6004 devices, if your ESPHome firmware exposes compatible coordinate sensors.
+
+This repository contains **generic examples only**. No user credentials, network endpoints, home-specific entity IDs or device PINs are required.
+
+## Quick install with HACS
+
+1. In Home Assistant open **HACS → ⋮ → Custom repositories**.
+2. Paste this repository's URL, choose **Integration**, and add it.
+3. Open **Radar Map Manager Lite**, click **Download**, then restart Home Assistant.
+4. In **Settings → Devices & services**, add **Radar Map Manager Lite (ESPHome)**.
+5. Create a manual Lovelace card:
+
+   ```yaml
+   type: custom:radar-map-card
+   map_group: default
+   ```
+
+**Important:** This fork has the same integration domain as upstream (`radar_map_manager`). Back up your Home Assistant setup, then replace the upstream integration rather than installing both.
+
+## Sensor requirements
+
+For each radar configured with a prefix such as `room_radar_left`, publish:
+
+```text
+sensor.room_radar_left_target_1_x
+sensor.room_radar_left_target_1_y
+sensor.room_radar_left_target_1_z  # optional: measured height
+```
+
+Publish target 2, 3, etc. where supported. Coordinates must be numeric and have the correct unit of measurement (`mm`, `cm`, or `m`). A distance-only entity (`sensor.<prefix>_distance`) supports an approximate 1D display but cannot reliably locate a person within different room zones.
+
+Radar devices are added using the `radar_map_manager.add_radar` HA action with the matching prefix. Layout and virtual zones can be managed in the card or imported from a JSON configuration.
+
+## Generic examples
+
+The [examples](examples) directory includes:
+
+- [Two radar layout for a 10 × 4 m rectangle](examples/dual_radar_room_10x4.json): left, center and right virtual zones. Positions, scale, mounting height and rotations **must be calibrated** for the real installation.
+- [Occupancy lighting automations](examples/occupancy_lighting.yaml), with placeholder light entities.
+- [Optional RGB scenes](examples/rgb_scenes.yaml), never activated automatically.
+- [Lovelace card](examples/lovelace_card.yaml).
+
+This is a 2D top-down room view with optional Z/height readings, **not** a fully reconstructed 3D room model.
+
+## Security model
+
+- Radar input comes exclusively from Home Assistant entity states.
+- No UDP listener, radar IP connections, MQTT commands, pairing codes or firmware OTA implementation.
+- Imported configuration is checked against a restricted set of geometry and software parameters; legacy hardware fields and secrets are dropped.
+- One read-only HA WebSocket provides local map updates to authenticated dashboard clients.
+- No automatic downloads or external data transmission from this integration.
+
+No static inspection can guarantee that software is free of all bugs. This fork has not yet been validated on real Home Assistant hardware and should not be used as a safety or fall-detection device.
+
+Run offline tests with `python -m unittest discover -s test -v`.
+
+## Documentation and license
+
+- [Guida in italiano](LEGGIMI_LITE.md)
+- [MIT License](LICENSE) — original copyright © 2024 Moe8383. Modified fork with attribution.

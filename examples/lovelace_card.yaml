@@ -1,0 +1,4 @@
+# Manual Lovelace card. JS resource is registered by the integration.
+type: custom:radar-map-card
+map_group: default
+title: "Radar Map"

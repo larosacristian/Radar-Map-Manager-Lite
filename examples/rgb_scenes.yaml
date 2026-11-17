@@ -1,0 +1,35 @@
+# DEMO ONLY: replace placeholder light entity IDs before enabling.
+# These scenes never run automatically. Trigger via HA dashboard or automations.
+
+- id: radar_lite_soft_light
+  name: "Radar Lite - Soft light"
+  entities:
+    light.demo_center_main:
+      state: "on"
+      brightness: 220
+    light.demo_left_rgb:
+      state: "on"
+      brightness: 60
+      rgb_color: [255, 180, 105]
+    light.demo_right_rgb:
+      state: "off"
+
+- id: radar_lite_relax
+  name: "Radar Lite - Relax"
+  entities:
+    light.demo_left_main:
+      state: "off"
+    light.demo_left_rgb:
+      state: "on"
+      brightness: 35
+      rgb_color: [35, 85, 255]
+
+- id: radar_lite_night
+  name: "Radar Lite - Night light"
+  entities:
+    light.demo_right_main:
+      state: "off"
+    light.demo_right_rgb:
+      state: "on"
+      brightness: 20
+      rgb_color: [255, 130, 40]

@@ -1,0 +1,35 @@
+# DEMO ONLY: replace placeholder light entity IDs before enabling.
+# No appliances are switched automatically.
+# Add via the HA Automation editor or your automations.yaml.
+
+- id: radar_lite_right_area_light_on
+  alias: "Radar Lite - Right area light on occupancy"
+  mode: restart
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.rmm_default_area_right_occupancy
+      to: "on"
+  condition:
+    - condition: sun
+      after: sunset
+      before: sunrise
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.demo_right_area  # REPLACE with a real entity
+
+- id: radar_lite_right_area_light_off
+  alias: "Radar Lite - Right area light off after vacancy"
+  mode: restart
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.rmm_default_area_right_occupancy
+      to: "off"
+      for: "00:03:00"
+  condition: []
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.demo_right_area  # REPLACE; review existing light timers
+
+# Clone and adapt these for other areas. Prefer explicit HA scenes for RGB.

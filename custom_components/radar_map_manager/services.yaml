@@ -1,0 +1,118 @@
+add_radar:
+  name: Add ESPHome radar
+  description: "Use the entity prefix, for example sensor.room_radar_left_target_1_x and _y."
+  fields:
+    radar_name:
+      name: ESPHome entity prefix
+      required: true
+      selector:
+        text:
+    map_group:
+      name: Map group
+      default: default
+      selector:
+        text:
+
+remove_radar:
+  name: Remove radar
+  fields:
+    radar_name:
+      name: Radar
+      required: true
+      selector:
+        text:
+
+set_radar_pause:
+  name: Pause radar on the map
+  description: Pauses only this integration's use of radar data. Sends no hardware commands.
+  fields:
+    radar_name:
+      name: Radar
+      required: true
+      selector:
+        text:
+    paused:
+      name: Paused
+      required: true
+      selector:
+        boolean:
+
+update_radar_zone:
+  name: Update virtual zone
+  description: Changes virtual polygons. Does not modify device hardware.
+  fields:
+    radar_name:
+      name: Radar (monitor_zones only)
+      selector:
+        text:
+    zone_type:
+      name: Zone type
+      required: true
+      selector:
+        select:
+          options:
+            - include_zones
+            - exclude_zones
+            - entrance_zones
+            - stationary_zones
+            - monitor_zones
+    points:
+      name: Polygon or zone list
+      required: true
+      selector:
+        object:
+    map_group:
+      name: Map group
+      default: default
+      selector:
+        text:
+
+update_radar_layout:
+  name: Calibrate radar layout
+  description: Updates only virtual map geometry.
+  fields:
+    radar_name:
+      name: Radar
+      required: true
+      selector:
+        text:
+    layout:
+      name: Origin, rotation and scale
+      required: true
+      selector:
+        object:
+    map_group:
+      name: Map group
+      selector:
+        text:
+
+update_map_config:
+  name: Update map settings
+  fields:
+    map_group:
+      name: Map group
+      required: true
+      selector:
+        text:
+
+import_config:
+  name: Import JSON configuration
+  description: "Drops unknown keys, device PINs, IP addresses and hardware settings."
+  fields:
+    config_json:
+      name: JSON
+      required: true
+      selector:
+        text:
+          multiline: true
+    map_group:
+      name: Target map group
+      default: default
+      selector:
+        text:
+
+reset_tracking_history:
+  name: Reset target tracking history
+
+generate_radar_config:
+  name: Recalculate map

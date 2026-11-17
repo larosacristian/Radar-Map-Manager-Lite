@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Radar Map Manager Lite (ESPHome)",
+        "description": "Crea la mappa locale. Le posizioni vengono lette soltanto dalle entità Home Assistant dei radar ESPHome."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "L'integrazione è già configurata. È consentita una sola istanza."
+    }
+  }
+}

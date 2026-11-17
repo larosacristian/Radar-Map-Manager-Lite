@@ -1,0 +1,16 @@
+{
+  "domain": "radar_map_manager",
+  "name": "Radar Map Manager Lite (ESPHome)",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": [
+    "http",
+    "frontend"
+  ],
+  "documentation": "https://github.com/larosacristian/Radar-Map-Manager-Lite",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/larosacristian/Radar-Map-Manager-Lite/issues",
+  "requirements": [],
+  "version": "1.3.13"
+}

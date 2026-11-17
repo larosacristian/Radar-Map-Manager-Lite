@@ -1,0 +1,1615 @@
+
+const EDITOR_I18N = {
+    "hw_limit": { "zh": "⚠️ 操作被拒绝：当前雷达底层屏蔽区已达上限 ({0}个)。", "en": "⚠️ Operation denied: Hardware blind zones reached the limit of {0}." },
+    "not_supported": { "zh": "⚠️ 兼容性提示：该功能仅支持RMM专用雷达\n\n💡 您可以通过MONITOR或者EXCLUDE区域设置进行软件区域过滤。", "en": "⚠️ Compatibility Note: This feature only supports RMM exclusive radars.\n💡 You can use MONITOR or EXCLUDE for software filtering." },
+    "auth_fail_alert": { "zh": "⚠️ 鉴权失败：专属配对码错误或未提供，硬件级高级功能已锁定！\n\n请点击雷达列表旁的【✎】按钮输入正确的 PIN 码。", "en": "⚠️ Auth Failed: PIN incorrect or missing. Hardware advanced features locked!\n\nPlease click the [✎] button next to the radar list to enter the correct PIN." },
+    "hw_unsupported": { "zh": "⚠️ 硬件限制：当前雷达 ({0}) 不支持硬件级屏蔽功能！", "en": "⚠️ Hardware Limit: Current radar ({0}) does not support hardware-level blind zones!" },
+    "modal_title": { "zh": "📡 添加雷达", "en": "📡 Add Radar" },
+    "modal_edit_title": { "zh": "📡 修改雷达参数", "en": "📡 Edit Radar Params" },
+    "modal_discovered": { "zh": "✨ 局域网内已发现的设备 (点击快捷选择):", "en": "✨ Discovered devices in LAN (click to select):" },
+    "modal_not_found": { "zh": "🔍 未自动嗅探到新雷达实体，请手动输入名称。", "en": "🔍 No new radar entity automatically sniffed, please enter name manually." },
+    "modal_lbl_name": { "zh": "雷达设备名称 (小写英文/数字/下划线):", "en": "Radar Name (lowercase/numbers/underscores):" },
+    "modal_lbl_pin": { "zh": "🔑 专属 8 位配对码 (非RMM专属雷达留空):", "en": "🔑 Exclusive 8-digit PIN (only for RMM exclusive radar):" },
+    "pair_box_title": { "zh": "⚡ 极速按键配对 (推荐)", "en": "⚡ Fast Button Pairing (Recommended)" },
+    "pair_box_desc": { "zh": "点击开启后，60 秒内双击雷达实体按键即可自动完成配对。", "en": "After starting, double-click the physical button on the radar within 60s to pair." },
+    "pair_btn_start": { "zh": "⚡ 开启按键配对 (60s)", "en": "⚡ Start Button Pairing (60s)" },
+    "pair_btn_waiting": { "zh": "⏳ 等待按键双击 ({0}s)...", "en": "⏳ Waiting for double click ({0}s)..." },
+    "pair_btn_cancel": { "zh": "✕ 取消", "en": "✕ Cancel" },
+    "pair_btn_timeout": { "zh": "⏱️ 配对超时，点击重试", "en": "⏱️ Pairing timed out, click to retry" },
+    "pair_btn_success": { "zh": "✅ 硬件双击配对成功！", "en": "✅ Hardware Pairing Succeeded!" },
+    "pair_badge_success": { "zh": "已自动获取配对码", "en": "PIN code acquired" },
+    "pair_manual_hint": { "zh": "(亦可在此手动输入)", "en": "(or enter manually below)" },
+    "modal_lbl_ip": { "zh": "🌐 雷达 IP 地址 (可选，.local 无法解析时必填):", "en": "🌐 Radar IP (optional, required if .local fails):" },
+    "modal_btn_cancel": { "zh": "取消", "en": "Cancel" },
+    "modal_btn_confirm": { "zh": "确定", "en": "Confirm" },
+    "err_input": { "zh": "❌ 内部错误：找不到输入框，请尝试刷新页面。", "en": "❌ Internal error: Input fields not found, please refresh the page." },
+    "empty_name": { "zh": "⚠️ 雷达名称不能为空！", "en": "⚠️ Radar name cannot be empty!" },
+    "dup_name": { "zh": "⚠️ 雷达 \"{0}\" 已经存在于地图中!", "en": "⚠️ Radar \"{0}\" already exists in the map!" },
+    "ha_reject": { "zh": "❌ HA 拒绝了请求: ", "en": "❌ HA rejected the request: " },
+    "del_radar": { "zh": "确定要删除 {0} 吗？", "en": "Delete {0}?" },
+    "pause_radar": { "zh": "雷达运行中 (点击暂停)", "en": "Radar Running (Click to Pause)" },
+    "resume_radar": { "zh": "雷达已暂停 (点击恢复)", "en": "Radar Paused (Click to Resume)" },
+    "del_zone": { "zh": "确定要删除该区域吗？", "en": "Are you sure you want to delete this zone?" },
+    "confirm_restore": { "zh": "⚠️ 恢复备份将应用导入的雷达和区域配置。\n\n确定要立即恢复吗？", "en": "⚠️ Restoring backup will apply imported radar and zone configurations.\n\nProceed to restore now?" },
+    "restore_ok": { "zh": "✅ 配置恢复成功！页面即将自动刷新...", "en": "✅ Configuration restored successfully! Reloading page..." },
+    "unsaved": { "zh": "检测到未保存的更改！现在保存吗？", "en": "Unsaved changes detected! Save now?" },
+    "draw_3": { "zh": "请绘制至少3个点，或选择一个区域。", "en": "Please draw 3+ points or select a zone." },
+    "name_conflict": { "zh": "名称冲突！\"{0}\" 将导致实体ID重复。请使用唯一的名称。", "en": "Name conflict! \"{0}\" will result in a duplicate Entity ID. Please use a unique name." },
+    "discard": { "zh": "放弃更改？", "en": "Discard changes?" },
+    "clear_all": { "zh": "清除所有区域？", "en": "Clear ALL zones?" },
+    "sel_radar": { "zh": "请先选择一个雷达。", "en": "Please select a radar first." },
+    "no_t1": { "zh": "未在当前雷达上找到活跃的 Target 1。无法冻结校准。", "en": "No active Target 1 found on this radar. Cannot freeze." },
+    "confirm_pc": { "zh": "⚠️ 警告：开启点云数据会大幅增加雷达发热与 Wi-Fi 带宽，仅建议在绘制盲区/调试时短暂使用！\n\n确定要立即开启 3D 点云直连通道吗？", "en": "⚠️ WARNING: Point Cloud greatly increases heat and Wi-Fi load. Recommended for debug only!\n\nEnable 3D point cloud stream now?" },
+    "hw_stay_unsupported": {
+        "zh": "⚠️ 硬件限制：当前雷达 ({0}) 不支持【驻留区 (HW Stay)】！\n\n💡 目前仅 LD6004 型号支持此区域。",
+        "en": "⚠️ Hardware Limit: Current radar ({0}) does not support [HW Stay Zone]!\n\n💡 Currently only the LD6004 model supports this zone."
+    },
+    "hw_stay_overflow_notice": {
+        "zh": "💡 提示：硬件仅支持前 4 个驻留区同步，当前防区将由集成端软件维持。",
+        "en": "💡 Notice: Hardware only supports syncing the first 4 stay zones; this zone will be maintained by software."
+    },
+    "calib_prompt": {
+        "zh": "请输入这条线段的真实物理长度（米）：\n例如: 4.5",
+        "en": "Enter the real physical length of this line (Meters):\nFor example: 4.5"
+    },
+    "auto_block_prompt": {
+        "zh": "🪄 确定要启动【自动识别排除区】吗？\n\n1. 系统将开启 15 秒环境噪点深度扫描\n2. 扫描期间请离开雷达探测区域并保持环境无人移动\n3. 扫描结束后将自动识别固定微动噪点（如风扇、绿植）并生成排除区矩形",
+        "en": "🪄 Start [Auto Learn Block Zones]?\n\n1. System will scan stationary environment for 15 seconds\n2. Please stay clear of the detection area during scanning\n3. Upon completion, static noise sources (fans, plants) will be auto-converted into block zones"
+    },
+    "auto_block_started": {
+        "zh": "⏳ 自动识别排除区已启动！请保持探测区域静止，15 秒后将自动更新地图...",
+        "en": "⏳ Auto Learn Block Zones started! Please stay clear, map will update in 15s..."
+    },
+    "auto_block_completed": {
+        "zh": "✅ 自动识别排除区完成！已成功同步并更新地图。",
+        "en": "✅ Auto Learn Block Zones completed! Map updated successfully."
+    },
+    "layout_saved": {
+        "zh": "✅ 雷达布局参数已保存成功！",
+        "en": "✅ Radar layout parameters saved successfully!"
+    },
+    "zone_saved": {
+        "zh": "✅ 防区配置已成功保存！",
+        "en": "✅ Zone configuration saved successfully!"
+    },
+    "hw_zone_saved_confirmed": {
+        "zh": "✅ 硬件防区已成功保存，并已获得专属硬件二次确认！",
+        "en": "✅ Hardware zones saved and confirmed by exclusive hardware!"
+    },
+    "hw_zone_saved_unconfirmed": {
+        "zh": "✅ 硬件防区已保存至系统，但硬件尚未响应二次确认，请检查雷达在线状态。",
+        "en": "✅ Hardware zones saved to system, but hardware did not confirm. Please check radar connection."
+    }
+};
+export class RadarEditor {
+    constructor(host, root, math, ui, renderer) {
+        this.host = host; 
+        this.root = root; 
+        this.math = math; 
+        this.ui = ui; 
+        this.renderer = renderer; 
+        this.lastClickTime = 0;
+        this.isAddingNew = false; 
+        this.t = (key, arg0 = "") => {
+            const stored = localStorage.getItem('rmm_panel_lang');
+            let isZh;
+            if (stored === 'zh' || stored === 'en') {
+                isZh = (stored === 'zh');
+            } else {
+                const lang = (this.host.state.hass && this.host.state.hass.language) || 'en';
+                isZh = lang.startsWith('zh');
+            }
+            if (EDITOR_I18N[key]) {
+                let txt = isZh ? EDITOR_I18N[key].zh : EDITOR_I18N[key].en;
+                return txt.replace("{0}", arg0);
+            }
+            return key;
+        };
+    }
+    bindEvents(state, config, callbacks) {
+        if (!callbacks) return;
+        const panel = this.root.getElementById('panel');
+        const header = this.root.getElementById('panel-header');
+        const clickLayer = this.root.getElementById('click-layer');
+        const ptX = this.root.getElementById('pt-x');
+        const ptY = this.root.getElementById('pt-y');
+        const inName = this.root.getElementById('in-name');
+        const inDelay = this.root.getElementById('in-delay');
+		const selRadarType = this.root.getElementById('sel-radar-zone-type');
+        if (selRadarType) {
+            if (!state.radar_zone_type) state.radar_zone_type = 'monitor_zones';
+            selRadarType.value = state.radar_zone_type;
+            selRadarType.onchange = (e) => {
+                state.radar_zone_type = e.target.value;
+                exitAddMode();
+                if(callbacks.resetSelection) callbacks.resetSelection();
+            };
+        }
+        if (panel) { 
+            const stop = (e) => e.stopPropagation(); 
+            ['click', 'mousedown', 'touchstart', 'pointerdown', 'dblclick'].forEach(evt => panel.addEventListener(evt, stop)); 
+        }
+        this.root.addEventListener('pointermove', (e) => {
+            if (!state.editing) return;
+            const rootEl = this.root.getElementById('root');
+            if (rootEl) {
+                const rect = rootEl.getBoundingClientRect();
+                const mx = parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(2));
+                const my = parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(2));
+                state.mousePos = { x: mx, y: my };
+                if (state.isAddingNew || (state.points && state.points.length > 0)) {
+                    this.renderer.draw(state, config, state.hass);
+                }
+            }
+        }, { capture: true });
+        if (header && panel) {
+            let isDraggingPanel = false; 
+            let startX, startY, initialLeft, initialTop;
+            const startDrag = (clientX, clientY) => {
+                isDraggingPanel = true; 
+                startX = clientX; 
+                startY = clientY;
+                const rect = panel.getBoundingClientRect(); 
+                const parent = panel.offsetParent || document.body; 
+                const parentRect = parent.getBoundingClientRect();
+                initialLeft = rect.left - parentRect.left; 
+                initialTop = rect.top - parentRect.top; 
+                panel.style.cursor = 'grabbing';
+            };
+            const moveDrag = (clientX, clientY) => {
+                if (!isDraggingPanel) return;
+                const dx = clientX - startX; 
+                const dy = clientY - startY;
+                let newLeft = initialLeft + dx; 
+                let newTop = initialTop + dy;
+                const parent = panel.offsetParent || document.body;
+                newLeft = Math.max(0, Math.min(newLeft, parent.clientWidth - panel.offsetWidth)); 
+                newTop = Math.max(0, Math.min(newTop, parent.clientHeight - panel.offsetHeight));
+                panel.style.left = `${newLeft}px`; 
+                panel.style.top = `${newTop}px`;
+            };
+            const endDrag = () => { 
+                if (isDraggingPanel) { 
+                    isDraggingPanel = false; 
+                    panel.style.cursor = 'auto'; 
+                } 
+            };
+            header.onmousedown = (e) => { 
+                if (['SELECT','BUTTON','INPUT','SPAN'].includes(e.target.tagName)) return;
+                if (e.target.classList.contains('win-btn')) return;
+                e.preventDefault(); 
+                startDrag(e.clientX, e.clientY); 
+            };
+            document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY)); 
+            document.addEventListener('mouseup', endDrag);
+            header.ontouchstart = (e) => {
+                if (['SELECT','BUTTON','INPUT','SPAN'].includes(e.target.tagName)) return;
+                if (e.target.classList.contains('win-btn')) return;
+                e.preventDefault(); 
+                const touch = e.touches[0];
+                startDrag(touch.clientX, touch.clientY);
+            };
+            document.addEventListener('touchmove', (e) => {
+                if (isDraggingPanel) {
+                    const touch = e.touches[0];
+                    moveDrag(touch.clientX, touch.clientY);
+                }
+            }, { passive: false });
+            document.addEventListener('touchend', endDrag);
+        }
+        const bindClick = (id, fn) => { const el = this.root.getElementById(id); if (el) el.onclick = fn; };
+        const exitAddMode = () => {
+            this.isAddingNew = false; 
+            state.isAddingNew = false; 
+            state.mousePos = null;
+            state.isCalibratingMap = null; 
+        };
+        bindClick('btn-toggle-mode', () => { exitAddMode(); if(callbacks.onToggleEditMode) callbacks.onToggleEditMode(); }); 
+        bindClick('btn-close-panel', () => { exitAddMode(); if(callbacks.onToggleEditMode) callbacks.onToggleEditMode(); });
+        bindClick('btn-calib-map-x', () => {
+            if (state.isCalibratingMap === 'X') {
+                exitAddMode();
+                state.points = []; 
+            } else {
+                exitAddMode();
+                state.isCalibratingMap = 'X';
+                state.points = [];
+                state.isAddingNew = true;
+                this.isAddingNew = true;
+            }
+            this.ui.updateStatus(state, config);
+            this.renderer.draw(state, config, state.hass); 
+        });
+        bindClick('btn-calib-map-y', () => {
+            if (state.isCalibratingMap === 'Y') {
+                exitAddMode();
+                state.points = []; 
+            } else {
+                exitAddMode();
+                state.isCalibratingMap = 'Y';
+                state.points = [];
+                state.isAddingNew = true;
+                this.isAddingNew = true;
+            }
+            this.ui.updateStatus(state, config);
+            this.renderer.draw(state, config, state.hass); 
+        });
+        bindClick('btn-min-panel', () => {
+            if (panel) {
+                panel.classList.toggle('collapsed');
+                const btn = this.root.getElementById('btn-min-panel');
+                if(btn) btn.innerText = panel.classList.contains('collapsed') ? '□' : '_';
+            }
+        });
+        bindClick('btn-mode-layout', () => { exitAddMode(); state.type = 'monitor_zones'; if(callbacks.onModeChange) callbacks.onModeChange('layout'); });
+        bindClick('btn-mode-zone', () => { exitAddMode(); state.type = 'include_zones'; if(callbacks.onModeChange) callbacks.onModeChange('zone'); }); 
+        bindClick('btn-mode-settings', () => { exitAddMode(); if(callbacks.onModeChange) callbacks.onModeChange('settings'); });
+        bindClick('btn-zone-view-mode', () => {
+            const cur = state.zone_view_mode || 'focus';
+            if (cur === 'focus') state.zone_view_mode = 'all';
+            else if (cur === 'all') state.zone_view_mode = 'hidden';
+            else state.zone_view_mode = 'focus';
+            this.ui.updateZoneViewModeBtn(state);
+            this.renderer.draw(state, config, state.hass);
+        });
+        bindClick('btn-edit-fov', () => { 
+            if (!state.fov_edit_mode && state.editMode === 'layout' && (state.radar_zone_type === 'hw_detect_zones' || state.radar_zone_type === 'hw_block_zones' || state.radar_zone_type === 'hw_stay_zones')) {
+                const radarData = state.data[state.radar] || {};
+                if (!radarData.capabilities) { alert(this.t("not_supported")); return; }
+                if (radarData.capabilities && radarData.auth_passed !== true) { alert(this.t("auth_fail_alert")); return; }
+                if (state.radar_zone_type === 'hw_stay_zones' && radarData.capabilities.model !== 'LD6004') {
+                    alert(this.t("hw_stay_unsupported", radarData.capabilities.model || 'Unknown'));
+                    return; 
+                }
+                if (radarData.capabilities.max_hw_zones === 0) { alert(this.t("hw_unsupported", radarData.capabilities.model || 'Unknown')); return; }
+            }
+            if (state.fov_edit_mode) {
+                if (state.hasUnsavedChanges) {
+                    const isZoneEdited = (state.selectedIndex !== null) || (state.points && state.points.length >= 3);
+                    if (isZoneEdited) {
+                        const btnSave = this.root.getElementById('btn-save');
+                        if (btnSave) btnSave.click(); 
+                    }
+                    if (state.layoutChanges && Object.keys(state.layoutChanges).length > 0) {
+                        if (callbacks.onSaveLayout) callbacks.onSaveLayout();
+                    }
+                }
+                state.selectedIndex = null;
+                state.selectedPointIndex = null;
+                state.hasUnsavedChanges = false;
+            }
+            exitAddMode();
+            if(callbacks.onToggleFOV) callbacks.onToggleFOV(); 
+        });
+        // Lite: nessuna auto-configurazione hardware, nessun comando MQTT.
+        bindClick('btn-auto-block', () => alert('Funzione hardware disabilitata in Lite.'));
+        bindLayoutInput(this, 'layout-x', 'origin_x', callbacks); 
+        bindLayoutInput(this, 'layout-y', 'origin_y', callbacks); 
+        bindLayoutInput(this, 'layout-rot', 'rotation', callbacks); 
+        bindLayoutInput(this, 'layout-sx', 'scale_x', callbacks); 
+        bindLayoutInput(this, 'layout-sy', 'scale_y', callbacks);
+        bindLayoutInput(this, 'layout-ceiling', 'ceiling_mount', callbacks, true);
+        bindLayoutInput(this, 'layout-mirror', 'mirror_x', callbacks, true); 
+        const chkFollow = this.root.getElementById('layout-follow-zones');
+        if (chkFollow) {
+            chkFollow.onchange = (e) => {
+                state.followZonesEnabled = e.target.checked;
+                this.ui.updateFollowZonesUI(state);
+            };
+        }
+        const followChips = this.root.querySelectorAll('.follow-chip');
+        followChips.forEach(chip => {
+            chip.onclick = () => {
+                if (!state.followZonesEnabled) return;
+                const type = chip.dataset.type;
+                if (!state.followZoneTypes) {
+                    state.followZoneTypes = { hw_detect_zones: true, hw_block_zones: false, hw_stay_zones: false };
+                }
+                state.followZoneTypes[type] = !state.followZoneTypes[type];
+                this.ui.updateFollowZonesUI(state);
+            };
+        });
+        const selLayoutRadarType = this.root.getElementById('layout-radar-type');
+        if(selLayoutRadarType) selLayoutRadarType.onchange = (e) => { 
+            if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('radar_type', parseInt(e.target.value)); 
+        };
+        const elH = this.root.getElementById('layout-h');
+        if (elH) {
+            elH.onchange = (e) => {
+                const val = parseFloat(e.target.value);
+                if (isNaN(val)) return;
+                let safeName = state.radar?.toLowerCase().replace(/ /g, "_").replace(/-/g, "_");
+                let hEntId = null;
+                const candidates = [
+                    `number.${safeName}_install_height`,
+                    `number.${safeName}_radar_height`,
+                    `number.${safeName}_mount_height`
+                ];
+                if (state.hass) {
+                    for (const c of candidates) {
+                        if (state.hass.states[c]) { hEntId = c; break; }
+                    }
+                    if (!hEntId) {
+                        const found = Object.keys(state.hass.states).find(k => 
+                            k.startsWith(`number.${safeName}`) && 
+                            !k.includes('fall') && 
+                            (k.includes('install_height') || k.includes('radar_height') || k.includes('mount_height'))
+                        );
+                        if (found) hEntId = found;
+                    }
+                }
+                // Solo metadati di calibrazione, non modificare il radar fisico.
+                if (callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('mount_height', val);
+            };
+        }
+        const syncZRange = () => {
+            const elMin = this.root.getElementById('layout-z-min');
+            const elMax = this.root.getElementById('layout-z-max');
+            if (!elMin || !elMax) return;
+            let minVal = parseFloat(elMin.value);
+            let maxVal = parseFloat(elMax.value);
+            if (isNaN(minVal)) minVal = -6.0;
+            if (isNaN(maxVal)) maxVal = 6.0;
+            minVal = Math.max(-6.0, Math.min(6.0, parseFloat(minVal.toFixed(1))));
+            maxVal = Math.max(-6.0, Math.min(6.0, parseFloat(maxVal.toFixed(1))));
+            if (minVal > maxVal) { const tmp = minVal; minVal = maxVal; maxVal = tmp; }
+            elMin.value = minVal;
+            elMax.value = maxVal;
+            if (callbacks.onLayoutParamChange) {
+                callbacks.onLayoutParamChange('z_min', minVal);
+                callbacks.onLayoutParamChange('z_max', maxVal);
+            }
+            // Nessuna pubblicazione MQTT per il range Z.
+        };
+        const elZMin = this.root.getElementById('layout-z-min');
+        const elZMax = this.root.getElementById('layout-z-max');
+        if (elZMin) elZMin.onchange = syncZRange;
+        if (elZMax) elZMax.onchange = syncZRange;
+        bindStepper(this, 'btn-sx-minus', 'layout-sx', -0.1, callbacks, 'scale_x');
+        bindStepper(this, 'btn-sx-plus', 'layout-sx', 0.1, callbacks, 'scale_x');
+        bindStepper(this, 'btn-sy-minus', 'layout-sy', -0.1, callbacks, 'scale_y');
+        bindStepper(this, 'btn-sy-plus', 'layout-sy', 0.1, callbacks, 'scale_y');
+        bindClick('btn-calc-ax', () => {
+            const elSy = this.root.getElementById('layout-sy');
+            const elRot = this.root.getElementById('layout-rot');
+            if(elSy) {
+                const sy = parseFloat(elSy.value) || 5;
+                let sx = 5;
+                const rot = Math.abs(parseFloat(elRot?.value || 0)) % 180;
+                const isSwapped = (rot > 45 && rot < 135); 
+                const conf = (state.data && state.data.global_config) || {};
+                if (conf.map_scale_x && conf.map_scale_y) {
+                    if (isSwapped) {
+                        sx = parseFloat((sy * (conf.map_scale_y / conf.map_scale_x)).toFixed(2));
+                    } else {
+                        sx = parseFloat((sy * (conf.map_scale_x / conf.map_scale_y)).toFixed(2));
+                    }
+                } else if (state.aspectRatio) {
+                    if (isSwapped) {
+                        sx = parseFloat((sy * state.aspectRatio).toFixed(2)); 
+                    } else {
+                        sx = parseFloat((sy / state.aspectRatio).toFixed(2)); 
+                    }
+                }
+                const elSx = this.root.getElementById('layout-sx'); if(elSx) elSx.value = sx;
+                if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('scale_x', sx);
+            }
+        });
+        bindClick('btn-calc-ay', () => {
+            const elSx = this.root.getElementById('layout-sx');
+            const elRot = this.root.getElementById('layout-rot');
+            if(elSx) {
+                const sx = parseFloat(elSx.value) || 5;
+                let sy = 5;
+                const rot = Math.abs(parseFloat(elRot?.value || 0)) % 180;
+                const isSwapped = (rot > 45 && rot < 135);
+                const conf = (state.data && state.data.global_config) || {};
+                if (conf.map_scale_x && conf.map_scale_y) {
+                    if (isSwapped) {
+                        sy = parseFloat((sx * (conf.map_scale_x / conf.map_scale_y)).toFixed(2));
+                    } else {
+                        sy = parseFloat((sx * (conf.map_scale_y / conf.map_scale_x)).toFixed(2));
+                    }
+                } else if (state.aspectRatio) {
+                    if (isSwapped) {
+                        sy = parseFloat((sx / state.aspectRatio).toFixed(2));
+                    } else {
+                        sy = parseFloat((sx * state.aspectRatio).toFixed(2)); 
+                    }
+                }
+                const elSy = this.root.getElementById('layout-sy'); if(elSy) elSy.value = sy;
+                if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('scale_y', sy);
+            }
+        });
+        bindClick('btn-save-layout', callbacks.onSaveLayout); 
+        bindClick('btn-freeze', callbacks.onCalibrationToggle); 
+        bindClick('btn-cancel-layout', callbacks.onCancelLayout);
+        const showRadarModal = (isEdit) => {
+            if (isEdit) {
+                alert('Radar Map Manager Lite: remove and re-add a radar to change its name.');
+                return;
+            }
+            const suggested = 'room_radar_left';
+            const value = window.prompt('ESPHome entity prefix (_target_1_x/_y), for example:', suggested);
+            if (value === null) return;
+            const name = value.trim().toLowerCase();
+            if (!/^[a-z0-9_]{1,64}$/.test(name)) {
+                alert('Use lowercase letters, numbers and underscores only.');
+                return;
+            }
+            state.hass.callService('radar_map_manager', 'add_radar', {
+                radar_name: name, map_group: state.mapGroup || 'default'
+            }).then(() => {
+                if (!state.data[name]) state.data[name] = {};
+                this.ui.updateRadarList(state, config);
+                this.renderer.draw(state, config, state.hass);
+            }).catch(error => alert('Failed to add radar: ' + String(error)));
+        };
+    bindClick('btn-add-radar', () => showRadarModal(false));
+        bindClick('btn-edit-radar', () => {
+            if (!state.radar || state.radar === 'rd_default') {
+                return alert(this.t("sel_radar"));
+            }
+            const radarData = state.data[state.radar] || {};
+            if (!radarData.capabilities) {
+                alert(this.t("not_supported"));
+                return; 
+            }
+            showRadarModal(true);
+        });
+        bindClick('btn-pause-radar', () => {
+            if (!state.radar || state.radar === 'rd_default') return alert(this.t("sel_radar"));
+            const rName = state.radar;
+            const currentData = state.data[rName] || {};
+            const nextPaused = !(currentData.paused === true);
+            if (!state.data[rName]) state.data[rName] = {};
+            state.data[rName].paused = nextPaused;
+            if (nextPaused) {
+                if (this.renderer.activePointCloud && this.renderer.activePointCloud.rName === rName) {
+                    this.renderer.activePointCloud = null;
+                }
+                if (this.host.state && this.host.state.wsTargets && this.host.state.wsTargets[rName]) {
+                    this.host.state.wsTargets[rName].targets = [];
+                }
+            }
+            this.ui.updateLayoutInputs(state, state.hass);
+            this.renderer.draw(state, config, state.hass);
+            state.hass.callService('radar_map_manager', 'set_radar_pause', {
+                radar_name: rName,
+                paused: nextPaused
+            }).then(() => {
+                console.log(`RMM: Radar '${rName}' pause state set to: ${nextPaused}`);
+            }).catch(err => {
+                console.error(`RMM: Failed to set radar pause state:`, err);
+                state.data[rName].paused = !nextPaused;
+                this.ui.updateLayoutInputs(state, state.hass);
+                this.renderer.draw(state, config, state.hass);
+                alert(this.t("ha_reject") + JSON.stringify(err));
+            });
+        });
+        bindClick('btn-del-radar', () => {
+            if(!state.radar || state.radar === 'rd_default') return alert(this.t("sel_radar"));
+            if(confirm(this.t("del_radar", state.radar))) {
+                const rToDelete = state.radar;
+                state.hass.callService('radar_map_manager', 'remove_radar', { radar_name: rToDelete });
+                setTimeout(() => { 
+                    if (state.data[rToDelete]) delete state.data[rToDelete]; 
+                    state.radar = null; 
+                    this.ui.updateRadarList(state, config); this.ui.updateLayoutInputs(state, state.hass); 
+                    this.renderer.draw(state, config, state.hass); 
+                }, 500);
+            }
+        });
+        // Lite: nessuna console web dei radar e nessun Cloud OTA.
+        bindClick('btn-radar-web', () => alert('Console hardware disabilitata in Lite.'));
+        bindClick('btn-radar-ota', () => alert('Aggiornamenti firmware disabilitati in Lite.'));
+        const updatePointFromInput = () => {
+            if (state.selectedIndex !== null && state.selectedPointIndex !== null && ptX && ptY) {
+                const xVal = parseFloat(ptX.value);
+                const yVal = parseFloat(ptY.value);
+                if (isNaN(xVal) || isNaN(yVal)) return;
+                const list = getActiveList(state);
+                if (list && list[state.selectedIndex]) { 
+                    const z = list[state.selectedIndex];
+                    const p = Array.isArray(z) ? z : z.points; 
+                    if (p && p[state.selectedPointIndex]) {
+                        p[state.selectedPointIndex] = [xVal, yVal];
+                        state.hasUnsavedChanges = true;
+                        this.renderer.draw(state, config, state.hass); 
+                        this.ui.updateStatus(state, config);
+                    }
+                }
+            }
+        };
+        if (ptX) ptX.oninput = updatePointFromInput; 
+        if (ptY) ptY.oninput = updatePointFromInput;
+        const updateZoneProps = () => {
+            if (state.selectedIndex !== null && inName && inDelay) {
+                const list = getActiveList(state);
+                if (list && list[state.selectedIndex]) {
+                    const z = list[state.selectedIndex];
+                    const newName = inName.value.trim();
+                    const newDelay = parseFloat(inDelay.value) || 0;
+                    if (z.name !== newName || Math.abs(z.delay - newDelay) > 0.001) {
+                        z.name = newName;
+                        z.delay = newDelay;
+                        state.hasUnsavedChanges = true;
+                        this.ui.updateStatus(state, config);
+                    }
+                }
+            }
+        };
+        if (inName) inName.oninput = updateZoneProps;
+        if (inDelay) inDelay.oninput = updateZoneProps;
+        const chkCustomZ = this.root.getElementById('chk-zone-custom-z');
+        const inZMin = this.root.getElementById('in-zone-z-min');
+        const inZMax = this.root.getElementById('in-zone-z-max');
+        const boxZInputs = this.root.getElementById('box-zone-z-inputs');
+        const boxZGlobal = this.root.getElementById('box-zone-z-global');
+        if (chkCustomZ) {
+            chkCustomZ.onchange = () => {
+                if (state.selectedIndex !== null) {
+                    const list = getActiveList(state);
+                    if (list && list[state.selectedIndex]) {
+                        const z = list[state.selectedIndex];
+                        const isFollowGlobal = chkCustomZ.checked;
+                        z.custom_z = !isFollowGlobal;
+                        const lblCustomZ = this.root.getElementById('lbl-zone-custom-z');
+                        if (lblCustomZ) {
+                            lblCustomZ.style.display = 'inline';
+                            lblCustomZ.innerText = (state.lang === 'zh' || !state.lang ? '跟随全局' : 'Global');
+                        }
+                        if (boxZInputs) boxZInputs.style.display = z.custom_z ? 'flex' : 'none';
+                        if (boxZGlobal) boxZGlobal.style.display = z.custom_z ? 'none' : 'flex';
+                        if (z.custom_z) {
+                            if (z.z_min === undefined) z.z_min = inZMin ? (parseFloat(inZMin.value) || -6.0) : -6.0;
+                            if (z.z_max === undefined) z.z_max = inZMax ? (parseFloat(inZMax.value) || 6.0) : 6.0;
+                        }
+                        state.hasUnsavedChanges = true;
+                        this.ui.updateStatus(state, config);
+                    }
+                }
+            };
+        }
+        const updateZCoords = () => {
+            if (state.selectedIndex !== null && inZMin && inZMax) {
+                const list = getActiveList(state);
+                if (list && list[state.selectedIndex]) {
+                    const z = list[state.selectedIndex];
+                    const zm = parseFloat(inZMin.value);
+                    const zM = parseFloat(inZMax.value);
+                    if (!isNaN(zm)) z.z_min = zm;
+                    if (!isNaN(zM)) z.z_max = zM;
+                    z.custom_z = true;
+                    state.hasUnsavedChanges = true;
+                    this.ui.updateStatus(state, config);
+                }
+            }
+        };
+        if (inZMin) {
+            inZMin.oninput = updateZCoords;
+            inZMin.onchange = updateZCoords;
+        }
+        if (inZMax) {
+            inZMax.oninput = updateZCoords;
+            inZMax.onchange = updateZCoords;
+        }
+        this.root.addEventListener('zone-select', (e) => {
+            exitAddMode();
+            if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) {
+                document.activeElement.blur();
+            }
+            setTimeout(() => {
+                this._checkUnsaved(state, callbacks, () => {
+                    if(callbacks.selectZone) callbacks.selectZone(e.detail, null, null);
+                });
+            }, 20);
+        });
+        bindClick('btn-cancel-edit', () => {
+            if (state.isAddingNew || state.points.length > 0) {
+                exitAddMode(); 
+                state.points = [];
+                if(callbacks.resetSelection) callbacks.resetSelection();
+            } else if (state.hasUnsavedChanges) {
+                if(confirm(this.t("discard"))) {
+                    if(callbacks.onDiscardConfig) callbacks.onDiscardConfig(); 
+                }
+            } else {
+                if(callbacks.resetSelection) callbacks.resetSelection();
+            }
+        });
+        bindClick('btn-cancel-layout', () => { 
+            state.layoutChanges = {}; 
+            state.hasUnsavedChanges = false;
+            if (state.calibration && state.calibration.active) {
+                state.calibration = { active: false, raw: null, map: null };
+            }
+            if (state.origFollowZonesSnapshot && state.radar && state.data[state.radar]) {
+                const rData = state.data[state.radar];
+                if (state.origFollowZonesSnapshot.hw_detect_zones) {
+                    rData.hw_detect_zones = JSON.parse(JSON.stringify(state.origFollowZonesSnapshot.hw_detect_zones));
+                }
+                if (state.origFollowZonesSnapshot.hw_block_zones) {
+                    rData.hw_block_zones = JSON.parse(JSON.stringify(state.origFollowZonesSnapshot.hw_block_zones));
+                }
+                if (state.origFollowZonesSnapshot.hw_stay_zones) {
+                    rData.hw_stay_zones = JSON.parse(JSON.stringify(state.origFollowZonesSnapshot.hw_stay_zones));
+                }
+                state.origFollowZonesSnapshot = null;
+                state.hasHwZoneChanges = false;
+            }
+            this.ui.updateLayoutInputs(state, state.hass); 
+            this.renderer.draw(state, config, state.hass); 
+            this.ui.updateStatus(state, config);
+        });
+        bindClick('btn-del-zone', () => {
+            if (confirm(this.t("del_zone"))) {
+                if (this.host) this.host.ignoreUpdatesUntil = Date.now() + 5000;
+                state.hasUnsavedChanges = true;
+                const list = getActiveList(state);
+                if (state.selectedIndex !== null && list && list[state.selectedIndex]) {
+                    list.splice(state.selectedIndex, 1); 
+                    state.points = [];
+                    state.selectedIndex = null;
+                    state.selectedPointIndex = null;
+                    exitAddMode();
+                    const inName = this.root.getElementById('in-name');
+                    const inDelay = this.root.getElementById('in-delay');
+                    const ptX = this.root.getElementById('pt-x');
+                    const ptY = this.root.getElementById('pt-y');
+                    if (inName) inName.value = '';
+                    if (inDelay) inDelay.value = '';
+                    if (ptX) ptX.value = '';
+                    if (ptY) ptY.value = '';
+                    if(callbacks.resetSelection) {
+                        try { callbacks.resetSelection(); } catch(e) { console.warn("RMM: resetSelection ignored:", e); }
+                    }
+                    if(callbacks.onSaveZoneConfig) callbacks.onSaveZoneConfig(); 
+                }
+            }
+        });
+        const btnUndo = this.root.getElementById('btn-undo');
+        bindClick('btn-undo', () => {
+            if (state.points.length > 0) state.points.pop();
+            else if(state.historyStack.length > 0) state.data = state.historyStack.pop();
+            if (state.points.length === 0) exitAddMode();
+            this.ui.updateLayoutInputs(state, state.hass);
+            this.renderer.draw(state, config, state.hass);
+            this.ui.updateStatus(state, config);
+        });
+        bindClick('btn-clear', () => { 
+            if(confirm(this.t("clear_all"))) { 
+                if (this.host) this.host.ignoreUpdatesUntil = Date.now() + 5000;
+                state.hasUnsavedChanges = true;
+                const list = getActiveList(state);
+                if (list) list.length = 0; 
+                state.points = [];
+                state.selectedIndex = null;
+                state.selectedPointIndex = null;
+                exitAddMode();
+                const inName = this.root.getElementById('in-name');
+                const inDelay = this.root.getElementById('in-delay');
+                const ptX = this.root.getElementById('pt-x');
+                const ptY = this.root.getElementById('pt-y');
+                if (inName) inName.value = '';
+                if (inDelay) inDelay.value = '';
+                if (ptX) ptX.value = '';
+                if (ptY) ptY.value = '';
+                if(callbacks.resetSelection) {
+                    try { callbacks.resetSelection(); } catch(e) { console.warn("RMM: resetSelection ignored:", e); }
+                }
+                if(callbacks.onSaveZoneConfig) callbacks.onSaveZoneConfig(); 
+            } 
+        });
+        bindClick('btn-save-layout', callbacks.onSaveLayout); 
+        bindClick('btn-freeze', callbacks.onCalibrationToggle);
+        const btnSave = this.root.getElementById('btn-save');
+        if (btnSave) {
+            btnSave.onclick = (e) => {
+                const list = getActiveList(state);
+                const isCreatingNew = (state.points.length >= 3);
+                if (state.points.length > 0 || (state.selectedIndex !== null && state.hasUnsavedChanges)) {
+                    const elName = this.root.getElementById('in-name');
+                    const elDelay = this.root.getElementById('in-delay');
+                    let n = elName ? elName.value.trim() : ''; 
+                    let d = elDelay ? parseFloat(elDelay.value) : NaN;
+                    if (isNaN(d)) {
+                        d = (state.editMode === 'layout' && state.radar_zone_type === 'hw_stay_zones') ? 15 : 0;
+                    }
+                    if (state.editMode === 'layout' && (state.radar_zone_type === 'hw_detect_zones' || state.radar_zone_type === 'hw_block_zones' || state.radar_zone_type === 'hw_stay_zones')) {
+                        const radarData = state.data[state.radar] || {};
+                        const caps = radarData.capabilities || {};
+                        const maxHwZones = caps.max_hw_zones !== undefined ? caps.max_hw_zones : 3; 
+                        if (state.radar_zone_type === 'hw_stay_zones' && caps.model !== 'LD6004') {
+                             alert(this.t("hw_stay_unsupported", caps.model || 'Unknown'));
+                             state.points = []; state.isAddingNew = false;
+                             this.renderer.draw(state, config, state.hass);
+                             this.ui.updateStatus(state, config);
+                             return; 
+                        }
+                        if (caps.model === 'LD2450' || caps.model === 'LD2452') {
+                            let otherType = '';
+                            let otherZones = [];
+                            if (state.radar_zone_type === 'hw_detect_zones') {
+                                otherType = 'hw_block_zones';
+                                otherZones = radarData.hw_block_zones || [];
+                            } else if (state.radar_zone_type === 'hw_block_zones') {
+                                otherType = 'hw_detect_zones';
+                                otherZones = radarData.hw_detect_zones || [];
+                            }
+                            if (otherZones.length > 0) {
+                                const typeNames = { 'hw_detect_zones': '【硬件检测区(绿)】', 'hw_block_zones': '【硬件屏蔽区(红)】' };
+                                const curName = typeNames[state.radar_zone_type];
+                                const otherName = typeNames[otherType];
+                                const msg = `⚠️ 硬件限制：LD2450 无法同时开启 ${curName} 和 ${otherName}！\n\n是否将已有的 ${otherName} 全部转换为 ${curName}？\n\n👉 点击 [确定] 自动合并并保存\n👉 点击 [取消] 放弃保存`;
+                                if (window.confirm(msg)) {
+                                    let availableSlots = maxHwZones - list.length;
+                                    if (isCreatingNew) availableSlots -= 1; 
+                                    otherZones.forEach(z => {
+                                        if (availableSlots > 0) { list.push(z); availableSlots--; }
+                                    });
+                                    state.data[state.radar][otherType] = []; 
+                                } else {
+                                    state.points = []; state.isAddingNew = false;
+                                    this.renderer.draw(state, config, state.hass);
+                                    this.ui.updateStatus(state, config);
+                                    return; 
+                                }
+                            }
+                        }
+                        const isLD6004Stay = (state.radar_zone_type === 'hw_stay_zones' && caps.model === 'LD6004');
+                        if (maxHwZones === 0 || (!isLD6004Stay && isCreatingNew && list.length >= maxHwZones)) {
+                            alert(this.t("hw_limit", maxHwZones));
+                            state.points = []; state.isAddingNew = false;
+                            this.renderer.draw(state, config, state.hass);
+                            this.ui.updateStatus(state, config);
+                            return; 
+                        }
+                    }
+                    if (!n) {
+                        if (state.editMode === 'layout') {
+                            const isHWB = state.radar_zone_type === 'hw_block_zones';
+                            const stayDefaultName = (list.length >= 4) ? `Stay ${list.length + 1}` : `HW Stay ${list.length + 1}`;
+                            n = isHWB ? `HW Block ${list.length + 1}` : (state.radar_zone_type === 'hw_detect_zones' ? `HW Detect ${list.length + 1}` : (state.radar_zone_type === 'hw_stay_zones' ? stayDefaultName : `Monitor ${list.length + 1}`));
+                        } else {
+                            n = `Zone ${list.length + 1}`;
+                        }
+                    }
+                    const normalize = (str) => (str || '').trim().toLowerCase().replace(/\s+/g, '_');
+                    const targetSlug = normalize(n);
+                    const isDuplicate = list.some((z, idx) => {
+                        if (state.selectedIndex !== null && idx === state.selectedIndex) return false;
+                        return normalize(z.name) === targetSlug;
+                    });
+                    if (isDuplicate) { alert(this.t("name_conflict", n)); return; }
+                    const chkCustomZ = this.root.getElementById('chk-zone-custom-z');
+                    const inZMin = this.root.getElementById('in-zone-z-min');
+                    const inZMax = this.root.getElementById('in-zone-z-max');
+                    const isFollowGlobal = chkCustomZ ? chkCustomZ.checked : true;
+                    const isCustomZ = !isFollowGlobal;
+                    const zMin = inZMin ? (parseFloat(inZMin.value) || -6.0) : -6.0;
+                    const zMax = inZMax ? (parseFloat(inZMax.value) || 6.0) : 6.0;
+                    if (state.points.length >= 3) {
+                        const newZone = { name: n, delay: d, points: [...state.points] };
+                        if (isCustomZ) {
+                            newZone.custom_z = true;
+                            newZone.z_min = zMin;
+                            newZone.z_max = zMax;
+                        } else {
+                            newZone.custom_z = false;
+                        }
+                        list.push(newZone);
+                        state.points = [];
+                        state.selectedIndex = list.length - 1;
+                    } else if (state.selectedIndex !== null && list[state.selectedIndex]) {
+                        list[state.selectedIndex].name = n;
+                        list[state.selectedIndex].delay = d;
+                        if (chkCustomZ) {
+                            list[state.selectedIndex].custom_z = isCustomZ;
+                            if (isCustomZ) {
+                                list[state.selectedIndex].z_min = zMin;
+                                list[state.selectedIndex].z_max = zMax;
+                            }
+                        }
+                    } else {
+                        alert(this.t("draw_3")); return;
+                    }
+                    state.hasUnsavedChanges = false;
+                    state.selectedPointIndex = null;
+                    const ptX = this.root.getElementById('pt-x');
+                    const ptY = this.root.getElementById('pt-y');
+                    if (ptX) ptX.value = '';
+                    if (ptY) ptY.value = '';
+                    exitAddMode();
+                    if(callbacks.onSaveZoneConfig) callbacks.onSaveZoneConfig(); 
+                } 
+                else {
+                    if (state.editMode === 'layout' && (state.radar_zone_type === 'hw_detect_zones' || state.radar_zone_type === 'hw_block_zones' || state.radar_zone_type === 'hw_stay_zones')) {
+                        const radarData = state.data[state.radar] || {};
+                        if (radarData.capabilities && radarData.auth_passed !== true) { alert(this.t("auth_fail_alert")); return; }
+                        const caps = radarData.capabilities || {};
+                        const maxHwZones = caps.max_hw_zones !== undefined ? caps.max_hw_zones : 3; 
+                        const isLD6004Stay = (state.radar_zone_type === 'hw_stay_zones' && caps.model === 'LD6004');
+                        if (!isLD6004Stay && list.length >= maxHwZones) {
+                            alert(this.t("hw_limit", maxHwZones));
+                            return; 
+                        }
+                    }
+                    if(callbacks.resetSelection) callbacks.resetSelection(); 
+                    this.isAddingNew = true;
+                    state.isAddingNew = true; 
+                    const inName = this.root.getElementById('in-name');
+                    if (inName) {
+                        const nextIdx = list.length + 1; 
+                        if (state.editMode === 'layout' && state.radar_zone_type === 'hw_block_zones') { inName.value = `HW Block ${nextIdx}`; } 
+                        else if (state.editMode === 'layout' && state.radar_zone_type === 'hw_detect_zones') { inName.value = `HW Detect ${nextIdx}`; } 
+                        else if (state.editMode === 'layout' && state.radar_zone_type === 'hw_stay_zones') { 
+                            inName.value = (nextIdx > 4) ? `Stay ${nextIdx}` : `HW Stay ${nextIdx}`; 
+                        } 
+                        else if (state.editMode === 'layout') { inName.value = `Monitor ${nextIdx}`; } 
+                        else { inName.value = `Zone ${nextIdx}`; }
+                    }
+                    const rootEl = this.root.getElementById('root');
+                    if (rootEl) {
+                        const rect = rootEl.getBoundingClientRect();
+                        state.mousePos = {
+                            x: parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(2)),
+                            y: parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(2))
+                        };
+                    }
+                    this.ui.updateStatus(state, config); 
+                    this.renderer.draw(state, config, state.hass);
+                }
+            };
+        }
+        bindClick('btn-backup', () => {
+            let exportData = null;
+            if (this.host && this.host.fullRawData) {
+                exportData = JSON.parse(JSON.stringify(this.host.fullRawData));
+                delete exportData.discovered_radars;
+                delete exportData._force_reset_history;
+                if (exportData.maps) {
+                    Object.values(exportData.maps).forEach(m => {
+                        if (m && m.targets) delete m.targets;
+                    });
+                }
+            } else {
+                const currentMg = state.mapGroup || "default";
+                exportData = {
+                    version: 1,
+                    maps: {
+                        [currentMg]: {
+                            zones: state.data.global_zones || { include_zones: [], exclude_zones: [] },
+                            config: state.data.global_config || {}
+                        }
+                    },
+                    radars: {}
+                };
+                Object.entries(state.data || {}).forEach(([k, v]) => {
+                    if (!['global_zones', 'global_config', 'fused_targets'].includes(k)) {
+                        exportData.radars[k] = { ...v, map_group: currentMg };
+                    }
+                });
+            }
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rmm_full_backup_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+        bindClick('btn-restore', () => { const f = this.root.getElementById('file-upload'); if(f) f.click(); });
+        const fileInput = this.root.getElementById('file-upload');
+        if (fileInput) {
+            fileInput.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const json = JSON.parse(ev.target.result);
+                        if (confirm(this.t("confirm_restore"))) {
+                            state.hass.callService('radar_map_manager', 'import_config', {
+                                config_json: JSON.stringify(json),
+                                map_group: state.mapGroup || "default"
+                            }).then(() => {
+                                alert(this.t("restore_ok"));
+                                setTimeout(() => location.reload(), 800);
+                            }).catch((err) => {
+                                alert(this.t("ha_reject") + JSON.stringify(err));
+                            });
+                        }
+                    } catch (err) { alert("Invalid JSON: " + (err.message || err)); }
+                };
+                reader.readAsText(file);
+                fileInput.value = '';
+            };
+        }
+        const selR = this.root.getElementById('sel-radar'); 
+        if(selR) selR.onchange = (e) => {
+            if (document.activeElement) document.activeElement.blur();
+            const newRadar = e.target.value;
+            exitAddMode();
+            setTimeout(() => {
+                this._checkUnsaved(state, callbacks, () => {
+                    state.layoutChanges = {}; 
+                    if(callbacks.onRadarChange) callbacks.onRadarChange(newRadar, selR);
+                    setTimeout(() => this.ui.updateLayoutInputs(state, state.hass), 50);
+                }, () => { 
+                    e.target.value = state.radar; 
+                });
+            }, 20);
+        };
+        const selType = this.root.getElementById('sel-type'); 
+        if(selType) selType.onchange = (e) => {
+            exitAddMode();
+            if(callbacks.onTypeChange) callbacks.onTypeChange(e.target.value);
+        };
+        const cbMirror = this.root.getElementById('layout-mirror'); 
+        if(cbMirror) cbMirror.onchange = (e) => { if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('mirror_x', e.target.checked); };
+        const cb3d = this.root.getElementById('layout-3d'); 
+        if(cb3d) cb3d.onchange = (e) => { if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('enable_3d', e.target.checked); };
+        if (clickLayer) this.setupPointerEvents(clickLayer, state, config, callbacks);
+    }
+    _checkUnsaved(state, callbacks, onProceed, onCancel) {
+        let isDirty = false;
+        let saveAction = 'none';
+        if (state.hasUnsavedChanges) { 
+            isDirty = true;
+            if (state.editMode === 'layout' && !state.fov_edit_mode) {
+                saveAction = 'layout';
+            } else {
+                saveAction = 'zone';
+            }
+        }
+        const inName = this.root.getElementById('in-name');
+        const inDelay = this.root.getElementById('in-delay');
+        if (state.selectedIndex !== null && inName && !isDirty) {
+            const list = getActiveList(state);
+            if (list && list[state.selectedIndex]) {
+                const z = list[state.selectedIndex];
+                const currentName = (inName.value || '').trim();
+                const currentDelay = parseFloat(inDelay.value) || 0;
+                const originalName = (z.name || '').trim();
+                const originalDelay = parseFloat(z.delay) || 0;
+                if (currentName !== originalName || Math.abs(currentDelay - originalDelay) > 0.001) {
+                    isDirty = true;
+                    saveAction = 'zone';
+                }
+            }
+        }
+        if (!isDirty && state.editMode === 'layout' && state.radar && state.layoutChanges) {
+            const currentLayout = (state.data[state.radar] && state.data[state.radar].layout) || {};
+            for (const [key, val] of Object.entries(state.layoutChanges)) {
+                let original = currentLayout[key];
+                if (original === undefined) {
+                    if (key.startsWith('scale')) original = 5;
+                    else if (key === 'origin_x' || key === 'origin_y') original = 50;
+                    else if (key === 'rotation') original = 0;
+                    else original = 0;
+                }
+                const v1 = parseFloat(val);
+                const v2 = parseFloat(original);
+                if (!isNaN(v1) && !isNaN(v2)) {
+                    if (Math.abs(v1 - v2) > 0.01) { isDirty = true; saveAction = 'layout'; break; }
+                } else if (val != original) {
+                    isDirty = true; saveAction = 'layout'; break;
+                }
+            }
+        }
+        if (isDirty) {
+            if (confirm(this.t("unsaved"))) {
+                if (saveAction === 'layout' && callbacks.onSaveLayout) callbacks.onSaveLayout();
+                else if(callbacks.onSaveZoneConfig) callbacks.onSaveZoneConfig(); 
+                setTimeout(onProceed, 200); 
+            } else {
+                state.hasUnsavedChanges = false;
+                state.layoutChanges = {}; 
+                if (onProceed) onProceed(); 
+            }
+        } else {
+            if (onProceed) onProceed();
+        }
+    }
+    setupPointerEvents(clickLayer, state, config, callbacks) {
+        const getArea = (points) => {
+            if (!points || points.length < 3) return 0;
+            let area = 0;
+            for (let i = 0, j = points.length - 1; i < points.length; j = i++) area += (points[j][0] + points[i][0]) * (points[j][1] - points[i][1]);
+            return Math.abs(area / 2);
+        };
+        const isPointInPoly = (x, y, poly) => {
+            let inside = false; 
+            for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { 
+                const xi = poly[i][0], yi = poly[i][1]; 
+                const xj = poly[j][0], yj = poly[j][1]; 
+                const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi); 
+                if (intersect) inside = !inside; 
+            } 
+            return inside;
+        };
+        const hitThreshold = (config.handle_radius || 4) * 1.5;
+        clickLayer.onpointermove = (e) => {
+            if (!state.editing) return;
+            const rootEl = this.host.shadowRoot.getElementById('root'); if (!rootEl) return; 
+            const rect = rootEl.getBoundingClientRect();
+            const mx = parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(2)); 
+            const my = parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(2));
+			state.mousePos = { x: mx, y: my };
+            if (state.dragState.isDragging) {
+                e.preventDefault();
+                clickLayer.style.cursor = "grabbing";
+                if (!state.dragState.hasMoved) {
+                    if (state.dragState.startX !== undefined && state.dragState.startY !== undefined) {
+                        const dist = Math.hypot(mx - state.dragState.startX, my - state.dragState.startY);
+                        if (dist < 0.6) return;
+                    }
+                    state.dragState.hasMoved = true;
+                    if (state.dragState.type === 'point' || state.dragState.type === 'zone') {
+                        state.hasUnsavedChanges = true; 
+                    }
+                }
+                if (state.dragState.type === 'calib_target' && state.calibration.map) {
+                    state.calibration.map.x = mx; state.calibration.map.y = my;
+                }
+                else if (state.dragState.type === 'radar_rotate') {
+                    const cfg = this.renderer.getRadarConfig(state, state.dragState.radar, state.hass);
+                    const dx = mx - cfg.origin_x; const dy = my - cfg.origin_y;
+                    let angleDeg = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+                    if (angleDeg < 0) angleDeg += 360; if (angleDeg >= 360) angleDeg -= 360;
+                    const snap = 45; const thr = 5;
+                    const rem = angleDeg % snap;
+                    if (rem < thr) angleDeg -= rem; else if (rem > (snap - thr)) angleDeg += (snap - rem);
+                    const newRot = Math.round(angleDeg);
+                    if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange('rotation', newRot);
+                    if (state.dragState.followCache) {
+                        this._applyFollowZones(state, { ...cfg, rotation: newRot }, state.dragState.followCache);
+                    }
+                }
+                else if (state.dragState.type === 'radar_move') {
+                    if(callbacks.onLayoutParamChange) {
+                        callbacks.onLayoutParamChange('origin_x', mx);
+                        callbacks.onLayoutParamChange('origin_y', my);
+                    }
+                    if (state.dragState.followCache) {
+                        const cfg = this.renderer.getRadarConfig(state, state.radar, state.hass);
+                        this._applyFollowZones(state, { ...cfg, origin_x: mx, origin_y: my }, state.dragState.followCache);
+                    }
+                    const elX = this.root.getElementById('layout-x');
+                    const elY = this.root.getElementById('layout-y');
+                    if(elX) elX.value = mx.toFixed(1);
+                    if(elY) elY.value = my.toFixed(1);
+                }
+                else if (state.dragState.type === 'point') {
+                    const list = getActiveList(state);
+                    if (list && list[state.dragState.polyIndex]) {
+                        const z = list[state.dragState.polyIndex]; const p = Array.isArray(z) ? z : z.points;
+                        if(p && p[state.dragState.pointIndex]) {
+                            let targetX = mx;
+                            let targetY = my;
+                            if (state.dragState.origPoint) {
+                                const dx = mx - state.dragState.startX;
+                                const dy = my - state.dragState.startY;
+                                targetX = Math.max(0, Math.min(100, state.dragState.origPoint[0] + dx));
+                                targetY = Math.max(0, Math.min(100, state.dragState.origPoint[1] + dy));
+                            }
+                            targetX = parseFloat(targetX.toFixed(2));
+                            targetY = parseFloat(targetY.toFixed(2));
+                            p[state.dragState.pointIndex] = [targetX, targetY];
+                            const ptX = this.root.getElementById('pt-x');
+                            const ptY = this.root.getElementById('pt-y');
+                            if(ptX) ptX.value = targetX.toFixed(1);
+                            if(ptY) ptY.value = targetY.toFixed(1);
+                        }
+                    }
+                }
+                else if (state.dragState.type === 'zone') {
+                    const list = getActiveList(state);
+                    if (list && list[state.dragState.polyIndex]) {
+                        const z = list[state.dragState.polyIndex]; const p = Array.isArray(z) ? z : z.points;
+                        const origPts = state.dragState.origPoints;
+                        if (p && origPts && origPts.length === p.length) {
+                            const minOrigX = Math.min(...origPts.map(pt => pt[0]));
+                            const maxOrigX = Math.max(...origPts.map(pt => pt[0]));
+                            const minOrigY = Math.min(...origPts.map(pt => pt[1]));
+                            const maxOrigY = Math.max(...origPts.map(pt => pt[1]));
+                            let dx = mx - state.dragState.startX;
+                            let dy = my - state.dragState.startY;
+                            const minBoundX = Math.min(0, minOrigX);
+                            const maxBoundX = Math.max(100, maxOrigX);
+                            const minBoundY = Math.min(0, minOrigY);
+                            const maxBoundY = Math.max(100, maxOrigY);
+                            if (minOrigX + dx < minBoundX) dx = minBoundX - minOrigX;
+                            if (maxOrigX + dx > maxBoundX) dx = maxBoundX - maxOrigX;
+                            if (minOrigY + dy < minBoundY) dy = minBoundY - minOrigY;
+                            if (maxOrigY + dy > maxBoundY) dy = maxBoundY - maxOrigY;
+                            for (let k = 0; k < p.length; k++) {
+                                p[k] = [
+                                    parseFloat((origPts[k][0] + dx).toFixed(2)),
+                                    parseFloat((origPts[k][1] + dy).toFixed(2))
+                                ];
+                            }
+                            if (state.selectedPointIndex !== null && p[state.selectedPointIndex]) {
+                                const ptX = this.root.getElementById('pt-x');
+                                const ptY = this.root.getElementById('pt-y');
+                                if (ptX) ptX.value = p[state.selectedPointIndex][0].toFixed(1);
+                                if (ptY) ptY.value = p[state.selectedPointIndex][1].toFixed(1);
+                            }
+                        }
+                    }
+                }
+				this.renderer.draw(state, config, state.hass);
+                return;
+            }
+            let cursor = (this.isAddingNew || state.isAddingNew) ? "crosshair" : "default";
+            if (!this.isAddingNew && !state.isAddingNew && state.editMode !== 'settings') {
+                const activeList = getActiveList(state);
+                let hitPoint = false;
+                for(let i=0; i<activeList.length; i++) {
+                    const z = activeList[i]; const pts = Array.isArray(z) ? z : z.points;
+                    for(let j=0; j<pts.length; j++) {
+                        if(Math.abs(pts[j][0]-mx) < hitThreshold && Math.abs(pts[j][1]-my) < hitThreshold) {
+                            cursor = "move"; hitPoint = true; break;
+                        }
+                    }
+                    if(hitPoint) break;
+                }
+                if (!hitPoint && state.editMode === 'layout' && !state.fov_edit_mode) {
+                    const radarNames = Object.keys(state.data).filter(k => !['global_zones','global_config','rd_default','fused_targets'].includes(k));
+                    for (const rName of radarNames) {
+                        const cfg = this.renderer.getRadarConfig(state, rName, state.hass);
+                        if (Math.abs(mx - cfg.origin_x) < 4 && Math.abs(my - cfg.origin_y) < 4) { cursor = "move"; break; }
+                        if (rName === state.radar) {
+                            const handlePos = this.renderer.calculateStandardCoord({...cfg, mirror_x:false, enable_correction:false}, 0, 4000);
+                            if (Math.abs(mx - handlePos.left) < 4 && Math.abs(my - handlePos.top) < 4) { cursor = "alias"; break; }
+                        }
+                    }
+                } else if (!hitPoint) {
+                    let hitZone = false;
+                    if (state.selectedIndex !== null && activeList[state.selectedIndex]) {
+                        const curZ = activeList[state.selectedIndex];
+                        const curPts = Array.isArray(curZ) ? curZ : curZ.points;
+                        if (isPointInPoly(mx, my, curPts)) {
+                            cursor = "move";
+                            hitZone = true;
+                        }
+                    }
+                    if (!hitZone) {
+                        for (let i = 0; i < activeList.length; i++) {
+                            const pts = Array.isArray(activeList[i]) ? activeList[i] : activeList[i].points;
+                            if (isPointInPoly(mx, my, pts)) { cursor = (state.selectedIndex === i) ? "move" : "pointer"; break; }
+                        }
+                    }
+                }
+            }
+            clickLayer.style.cursor = cursor;
+			this.renderer.draw(state, config, state.hass);
+        };
+        clickLayer.onpointerdown = (e) => {
+            if (!state.editing) return;
+            e.preventDefault(); 
+            const active = document.activeElement;
+            if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT')) active.blur();
+            const rootEl = this.host.shadowRoot.getElementById('root'); if (!rootEl) return; 
+            const rect = rootEl.getBoundingClientRect();
+            const mx = parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(2)); 
+            const my = parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(2));
+            if (this.isAddingNew || state.isAddingNew) {
+                if (state.isCalibratingMap) {
+                    if (state.points.length === 0) {
+                        state.points.push([mx, my]);
+                    } else if (state.points.length === 1) {
+                        let p1 = state.points[0];
+                        let finalX = mx, finalY = my;
+                        if (state.isCalibratingMap === 'X') finalY = p1[1]; 
+                        if (state.isCalibratingMap === 'Y') finalX = p1[0]; 
+                        state.points.push([finalX, finalY]);
+                        this.renderer.draw(state, config, state.hass);
+                        const overlay = document.createElement('div');
+                        overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:sans-serif;";
+                        overlay.innerHTML = `
+                            <div style="background:var(--card-background-color, #fff);color:var(--primary-text-color, #333);padding:24px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.3);width:300px;text-align:center;">
+                                <h3 style="margin-top:0; color:var(--primary-color, #03a9f4); font-size:18px;">📐 Map Calibration</h3>
+                                <p style="font-size:14px; color:var(--secondary-text-color, #666); white-space:pre-wrap; margin-bottom:20px;">${this.t("calib_prompt")}</p>
+                                <input type="number" id="rmm-calib-len" step="0.1" placeholder="e.g. 4.5" style="width:100%; box-sizing:border-box; padding:12px; border:2px solid var(--primary-color, #03a9f4); border-radius:6px; font-size:16px; text-align:center; margin-bottom:20px; outline:none; background:var(--secondary-background-color, #fafafa); color:var(--primary-text-color, #333);">
+                                <div style="display:flex; gap:12px;">
+                                    <button id="rmm-btn-cancel" style="flex:1; padding:12px; border:none; background:var(--disabled-text-color, #ccc); color:#fff; border-radius:9999px; font-weight:bold; cursor:pointer;">Cancel</button>
+                                    <button id="rmm-btn-ok" style="flex:1; padding:12px; border:none; background:var(--primary-color, #03a9f4); color:#fff; border-radius:9999px; font-weight:bold; cursor:pointer;">Confirm</button>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+                        const inp = overlay.querySelector('#rmm-calib-len');
+                        inp.focus();
+                        const cleanup = (valStr) => {
+                            overlay.remove(); 
+                            try {
+                                if (valStr !== null && valStr.trim() !== '') {
+                                    let len = parseFloat(valStr);
+                                    if (!isNaN(len) && len > 0) {
+                                        let diff = 0;
+                                        if (state.isCalibratingMap === 'X') diff = Math.abs(finalX - p1[0]);
+                                        if (state.isCalibratingMap === 'Y') diff = Math.abs(finalY - p1[1]);
+                                        if (diff > 0) {
+                                            let ratio = diff / len;
+                                            let fullData = JSON.parse(JSON.stringify(this.host.fullRawData || {}));
+                                            let mg = state.mapGroup || "default";
+                                            if (!fullData.maps) fullData.maps = {};
+                                            if (!fullData.maps[mg]) fullData.maps[mg] = {};
+                                            if (!fullData.maps[mg].config) fullData.maps[mg].config = {};
+                                            if (state.isCalibratingMap === 'X') fullData.maps[mg].config.map_scale_x = ratio;
+                                            if (state.isCalibratingMap === 'Y') fullData.maps[mg].config.map_scale_y = ratio;
+                                            state.hass.callService('radar_map_manager', 'import_config', { config_json: JSON.stringify(fullData) });
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("RMM Calib Error:", e);
+                            } finally {
+                                state.isCalibratingMap = null; state.isAddingNew = false; this.isAddingNew = false;
+                                state.points = []; 
+                                this.renderer.draw(state, config, state.hass);
+                                this.ui.updateStatus(state, config);
+                            }
+                        };
+                        overlay.querySelector('#rmm-btn-cancel').onclick = () => cleanup(null);
+                        overlay.querySelector('#rmm-btn-ok').onclick = () => cleanup(inp.value);
+                        inp.onkeydown = (e) => { if (e.key === 'Enter') cleanup(inp.value); if (e.key === 'Escape') cleanup(null); };
+                    }
+                    this.renderer.draw(state, config, state.hass); 
+                    this.ui.updateStatus(state, config);
+                    return;
+                }
+                state.points.push([mx, my]);
+                this.renderer.draw(state, config, state.hass); 
+                this.ui.updateStatus(state, config);
+                return;
+            }
+            if (state.calibration && state.calibration.active) {
+                if (state.calibration.map) {
+                    const tx = state.calibration.map.x; const ty = state.calibration.map.y;
+                    if (Math.abs(mx - tx) < hitThreshold && Math.abs(my - ty) < hitThreshold) {
+                        state.dragState = { isDragging: true, hasMoved: false, type: 'calib_target' };
+                        clickLayer.setPointerCapture(e.pointerId);
+                        return;
+                    }
+                }
+                return;
+            }
+            if (state.editMode === 'settings') return;
+            if (state.editMode === 'layout' && !state.fov_edit_mode) {
+                if (state.radar) {
+                    const cfg = this.renderer.getRadarConfig(state, state.radar, state.hass);
+                    const handlePos = this.renderer.calculateStandardCoord({...cfg, mirror_x: false, enable_correction: false}, 0, 4000);
+                    const distRot = Math.sqrt(Math.pow(mx - handlePos.left, 2) + Math.pow(my - handlePos.top, 2));
+                    if (distRot < 3) { 
+                        const followCache = this._captureFollowZonesLocalCoords(state);
+                        state.dragState = { isDragging: true, hasMoved: false, type: 'radar_rotate', radar: state.radar, startAngle: cfg.rotation, followCache };
+                        clickLayer.setPointerCapture(e.pointerId);
+                        return;
+                    }
+                }
+                const radarNames = Object.keys(state.data).filter(k => !['global_zones','global_config','rd_default'].includes(k));
+                let hitRadar = null;
+                for (const rName of radarNames) {
+                    const cfg = this.renderer.getRadarConfig(state, rName, state.hass);
+                    const dist = Math.sqrt(Math.pow(mx - cfg.origin_x, 2) + Math.pow(my - cfg.origin_y, 2));
+                    if (dist < 4) { hitRadar = rName; break; }
+                }
+                if (hitRadar) {
+                    if (state.radar !== hitRadar) {
+                        const sel = this.root.getElementById('sel-radar');
+                        this._checkUnsaved(state, callbacks, () => {
+                            state.layoutChanges = {}; 
+                            if (sel) sel.value = hitRadar; 
+                            if(callbacks.onRadarChange) callbacks.onRadarChange(hitRadar, sel);
+                            setTimeout(() => this.ui.updateLayoutInputs(state, state.hass), 50);
+                        });
+                        return; 
+                    }
+                    const followCache = this._captureFollowZonesLocalCoords(state);
+                    state.dragState = { isDragging: true, hasMoved: false, type: 'radar_move', startX: mx, startY: my, followCache };
+                    clickLayer.setPointerCapture(e.pointerId);
+                }
+                return; 
+            }
+            const now = Date.now(); const isDbl = (now - this.lastClickTime < 300); this.lastClickTime = now; 
+            let hit = false; const activeList = getActiveList(state); 
+            for(let i=0; i<activeList.length; i++) {
+                const z = activeList[i]; const pts = Array.isArray(z) ? z : z.points;
+                for(let j=0; j<pts.length; j++) {
+                    if(Math.abs(pts[j][0]-mx) < hitThreshold && Math.abs(pts[j][1]-my) < hitThreshold) {
+                        if(isDbl) { if(callbacks.deletePoint) callbacks.deletePoint(i, j); return; }
+                        state.dragState = {
+                            isDragging: true,
+                            hasMoved: false,
+                            type: 'point',
+                            polyIndex: i,
+                            pointIndex: j,
+                            startX: mx,
+                            startY: my,
+                            origPoint: [pts[j][0], pts[j][1]],
+                            startSnapshot: JSON.stringify(state.data)
+                        };
+                        clickLayer.setPointerCapture(e.pointerId); 
+                        setTimeout(() => {
+                            if(callbacks.selectZone) callbacks.selectZone(i, j, z); 
+                            this.renderer.draw(state, config, state.hass); 
+                        }, 10);
+                        hit = true; break;
+                    }
+                }
+                if(hit) break;
+            }
+            if (!hit) {
+                if (state.selectedIndex !== null && activeList[state.selectedIndex]) {
+                    const curZ = activeList[state.selectedIndex];
+                    const curPts = Array.isArray(curZ) ? curZ : curZ.points;
+                    if (isPointInPoly(mx, my, curPts)) {
+                        state.selectedPointIndex = null;
+                        state.dragState = {
+                            isDragging: true,
+                            hasMoved: false,
+                            type: 'zone',
+                            polyIndex: state.selectedIndex,
+                            startX: mx,
+                            startY: my,
+                            origPoints: curPts.map(p => [...p]),
+                            startSnapshot: JSON.stringify(state.data)
+                        };
+                        clickLayer.setPointerCapture(e.pointerId);
+                        setTimeout(() => {
+                            if (callbacks.selectZone) callbacks.selectZone(state.selectedIndex, null, curZ);
+                            this.renderer.draw(state, config, state.hass);
+                        }, 10);
+                        hit = true;
+                    }
+                }
+                if (!hit) {
+                    let hitCandidates = [];
+                    for (let i = 0; i < activeList.length; i++) {
+                        const pts = Array.isArray(activeList[i]) ? activeList[i] : activeList[i].points;
+                        if (isPointInPoly(mx, my, pts)) hitCandidates.push({ index: i, area: getArea(pts), obj: activeList[i] });
+                    }
+                    if (hitCandidates.length > 0) {
+                        hitCandidates.sort((a, b) => a.area - b.area);
+                        const chosen = hitCandidates[0];
+                        if (state.hasUnsavedChanges) {
+                            setTimeout(() => {
+                                this._checkUnsaved(state, callbacks, () => {
+                                    if(callbacks.selectZone) callbacks.selectZone(chosen.index, null, chosen.obj);
+                                    this.renderer.draw(state, config, state.hass); 
+                                });
+                            }, 10);
+                        } else {
+                            const chosenPts = Array.isArray(chosen.obj) ? chosen.obj : chosen.obj.points;
+                            state.dragState = {
+                                isDragging: true,
+                                hasMoved: false,
+                                type: 'zone',
+                                polyIndex: chosen.index,
+                                startX: mx,
+                                startY: my,
+                                origPoints: chosenPts.map(p => [...p]),
+                                startSnapshot: JSON.stringify(state.data)
+                            };
+                            clickLayer.setPointerCapture(e.pointerId);
+                            setTimeout(() => {
+                                if(callbacks.selectZone) callbacks.selectZone(chosen.index, null, chosen.obj);
+                                this.renderer.draw(state, config, state.hass); 
+                            }, 10);
+                        }
+                        hit = true;
+                    }
+                }
+            }
+            if (!hit) {
+                if (state.selectedIndex !== null && activeList[state.selectedIndex]) {
+                    const curZ = activeList[state.selectedIndex];
+                    const curPts = Array.isArray(curZ) ? curZ : curZ.points;
+                    if (state.selectedPointIndex !== null && curPts && curPts[state.selectedPointIndex]) {
+                        const curPt = curPts[state.selectedPointIndex];
+                        state.dragState = {
+                            isDragging: true,
+                            hasMoved: false,
+                            isRemoteDrag: true,
+                            type: 'point',
+                            polyIndex: state.selectedIndex,
+                            pointIndex: state.selectedPointIndex,
+                            startX: mx,
+                            startY: my,
+                            origPoint: [curPt[0], curPt[1]],
+                            startSnapshot: JSON.stringify(state.data)
+                        };
+                        clickLayer.setPointerCapture(e.pointerId);
+                        hit = true;
+                    } else if (curPts && curPts.length > 0) {
+                        state.dragState = {
+                            isDragging: true,
+                            hasMoved: false,
+                            isRemoteDrag: true,
+                            type: 'zone',
+                            polyIndex: state.selectedIndex,
+                            startX: mx,
+                            startY: my,
+                            origPoints: curPts.map(p => [...p]),
+                            startSnapshot: JSON.stringify(state.data)
+                        };
+                        clickLayer.setPointerCapture(e.pointerId);
+                        hit = true;
+                    }
+                }
+            }
+            if (!hit) {
+                if (state.selectedIndex !== null) { 
+                    if(callbacks.resetSelection) callbacks.resetSelection(); 
+                    this.renderer.draw(state, config, state.hass); 
+                } 
+            }
+        };
+        clickLayer.onpointerup = (e) => {
+             if (state.dragState.isDragging) {
+                const rootEl = this.host.shadowRoot.getElementById('root');
+                let mx = 0, my = 0;
+                if (rootEl) {
+                    const rect = rootEl.getBoundingClientRect();
+                    mx = parseFloat((((e.clientX - rect.left) / rect.width) * 100).toFixed(2));
+                    my = parseFloat((((e.clientY - rect.top) / rect.height) * 100).toFixed(2));
+                }
+                if (state.dragState.type === 'calib_target' && state.calibration.raw) {
+                    let rx_m = state.calibration.raw.x / 1000.0;
+                    let ry_m = state.calibration.raw.y / 1000.0;
+                    const cfg = this.renderer.getRadarConfig(state, state.radar, state.hass);
+                    if (cfg.mirror_x) rx_m = -rx_m;
+                    const dx = mx - cfg.origin_x;
+                    const dy = my - cfg.origin_y;
+                    const rad = (cfg.rotation - 90) * Math.PI / 180.0;
+                    const yVecX = Math.cos(rad);
+                    const yVecY = Math.sin(rad);
+                    const xVecX = Math.cos(rad + Math.PI / 2);
+                    const xVecY = Math.sin(rad + Math.PI / 2);
+                    const projX = dx * xVecX + dy * xVecY;
+                    const projY = dx * yVecX + dy * yVecY;
+                    let newSx = cfg.scale_x;
+                    let newSy = cfg.scale_y;
+                    if (Math.abs(rx_m) > 0.1) newSx = Math.abs(projX / rx_m);
+                    if (Math.abs(ry_m) > 0.1) newSy = Math.abs(projY / ry_m);
+                    newSx = parseFloat(newSx.toFixed(2));
+                    newSy = parseFloat(newSy.toFixed(2));
+                    if (callbacks.onLayoutParamChange) {
+                        callbacks.onLayoutParamChange('scale_x', newSx);
+                        callbacks.onLayoutParamChange('scale_y', newSy);
+                    }
+                    const elSx = this.root.getElementById('layout-sx');
+                    const elSy = this.root.getElementById('layout-sy');
+                    if (elSx) elSx.value = newSx;
+                    if (elSy) elSy.value = newSy;
+                }
+                if (state.dragState.hasMoved) {
+                    if (state.dragState.startSnapshot) { 
+                        state.historyStack.push(JSON.parse(state.dragState.startSnapshot)); 
+                        if (state.historyStack.length > 10) state.historyStack.shift(); 
+                    }
+                    if (state.dragState.type === 'point' || state.dragState.type === 'zone') {
+                        state.hasUnsavedChanges = true; 
+                    }
+                } else {
+                    state.dragState.startSnapshot = null;
+                    if (state.dragState.isRemoteDrag) {
+                        if (callbacks.resetSelection) callbacks.resetSelection();
+                    }
+                }
+                state.dragState.isDragging = false; 
+                state.dragState.hasMoved = false;
+                state.dragState.isRemoteDrag = false;
+                try {
+                    if (clickLayer.hasPointerCapture && clickLayer.hasPointerCapture(e.pointerId)) {
+                        clickLayer.releasePointerCapture(e.pointerId);
+                    }
+                } catch (err) {}
+                clickLayer.style.cursor = "default";
+                this.ui.updateStatus(state, config);
+                this.renderer.draw(state, config, state.hass);
+            }
+        };
+        clickLayer.onpointercancel = clickLayer.onpointerup;
+    }
+    _captureFollowZonesLocalCoords(state) {
+        if (!state.followZonesEnabled || !state.radar || !state.data[state.radar]) return null;
+        const cfg = this.renderer.getRadarConfig(state, state.radar, state.hass);
+        const rData = state.data[state.radar];
+        if (!state.origFollowZonesSnapshot) {
+            state.origFollowZonesSnapshot = {
+                hw_detect_zones: JSON.parse(JSON.stringify(rData.hw_detect_zones || [])),
+                hw_block_zones: JSON.parse(JSON.stringify(rData.hw_block_zones || [])),
+                hw_stay_zones: JSON.parse(JSON.stringify(rData.hw_stay_zones || []))
+            };
+        }
+        const items = [];
+        const types = ['hw_detect_zones', 'hw_block_zones', 'hw_stay_zones'];
+        types.forEach(type => {
+            if (state.followZoneTypes && state.followZoneTypes[type] && Array.isArray(rData[type])) {
+                rData[type].forEach((z, zIdx) => {
+                    const pts = Array.isArray(z) ? z : z.points;
+                    if (Array.isArray(pts)) {
+                        pts.forEach((p, pIdx) => {
+                            const local = this.renderer.math.canvasToRadarLocal(cfg, p[0], p[1]);
+                            items.push({ type, zIdx, pIdx, xm: local.xm, ym: local.ym });
+                        });
+                    }
+                });
+            }
+        });
+        return { cfg, items };
+    }
+    _applyFollowZones(state, currentLayout, followCache) {
+        if (!followCache || !followCache.items || followCache.items.length === 0) return;
+        const rData = state.data[state.radar];
+        if (!rData) return;
+        followCache.items.forEach(item => {
+            if (rData[item.type] && rData[item.type][item.zIdx]) {
+                const z = rData[item.type][item.zIdx];
+                const pts = Array.isArray(z) ? z : z.points;
+                if (pts && pts[item.pIdx]) {
+                    const newPt = this.renderer.math.radarLocalToCanvas(currentLayout, item.xm, item.ym);
+                    pts[item.pIdx][0] = newPt[0];
+                    pts[item.pIdx][1] = newPt[1];
+                }
+            }
+        });
+        state.hasHwZoneChanges = true;
+        state.hasUnsavedChanges = true;
+    }
+    _transformFollowZonesByParam(state, paramKey, newVal) {
+        if (!['origin_x', 'origin_y', 'rotation', 'scale_x', 'scale_y'].includes(paramKey)) return;
+        const followCache = this._captureFollowZonesLocalCoords(state);
+        if (!followCache) return;
+        const oldCfg = this.renderer.getRadarConfig(state, state.radar, state.hass);
+        const newCfg = { ...oldCfg, [paramKey]: newVal };
+        this._applyFollowZones(state, newCfg, followCache);
+    }
+}
+function getActiveList(state) {
+    if (state.editMode === 'layout') {
+        if (!state.data[state.radar]) return [];
+        const type = state.radar_zone_type || 'monitor_zones';
+        if (!state.data[state.radar][type]) {
+            state.data[state.radar][type] = [];
+        }
+        return state.data[state.radar][type];
+    } else {
+        if (!state.data.global_zones) return [];
+        if (!state.data.global_zones[state.type]) {
+            state.data.global_zones[state.type] = [];
+        }
+        return state.data.global_zones[state.type];
+    }
+}
+function bindStepper(editor, btnId, inputId, step, callbacks, paramKey) {
+    const btn = editor.root.getElementById(btnId);
+    const input = editor.root.getElementById(inputId);
+    if (btn && input) {
+        btn.onclick = () => {
+            let val = parseFloat(input.value) || 5;
+            val = parseFloat((val + step).toFixed(1));
+            if (val < 1) val = 1; if (val > 20) val = 20;
+            input.value = val;
+            if (editor._transformFollowZonesByParam && editor.host?.state?.followZonesEnabled) {
+                editor._transformFollowZonesByParam(editor.host.state, paramKey, val);
+            }
+            if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange(paramKey, val);
+        };
+    }
+}
+function bindLayoutInput(editor, id, key, callbacks, isCheck = false) {
+    const el = editor.root.getElementById(id);
+    if (el) el.onchange = (e) => { 
+        const val = isCheck ? e.target.checked : parseFloat(e.target.value);
+        if (editor._transformFollowZonesByParam && editor.host?.state?.followZonesEnabled) {
+            editor._transformFollowZonesByParam(editor.host.state, key, val);
+        }
+        if(callbacks.onLayoutParamChange) callbacks.onLayoutParamChange(key, val); 
+    };
+}

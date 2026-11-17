@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "maps": {
+    "default": {
+      "zones": {
+        "include_zones": [
+          {
+            "name": "area_left",
+            "delay": 20,
+            "points": [[0, 0], [35, 0], [35, 100], [0, 100]]
+          },
+          {
+            "name": "area_center",
+            "delay": 30,
+            "points": [[35, 0], [65, 0], [65, 100], [35, 100]]
+          },
+          {
+            "name": "area_right",
+            "delay": 20,
+            "points": [[65, 0], [100, 0], [100, 100], [65, 100]]
+          }
+        ],
+        "exclude_zones": [],
+        "entrance_zones": [],
+        "stationary_zones": []
+      },
+      "config": {
+        "map_scale_x": 10,
+        "map_scale_y": 25,
+        "update_interval": 0.5,
+        "merge_distance": 0.8,
+        "target_height": 1.5,
+        "verify_delay": 2.5,
+        "enable_verify_rule": true,
+        "enable_tracking": true,
+        "show_labels": true,
+        "show_trails": true,
+        "fused_color": "#FFD700"
+      }
+    }
+  },
+  "radars": {
+    "room_radar_left": {
+      "map_group": "default",
+      "paused": false,
+      "layout": {
+        "origin_x": 50,
+        "origin_y": 50,
+        "rotation": -90,
+        "scale_x": 25,
+        "scale_y": 10,
+        "mount_height": 2.5,
+        "radar_type": 3,
+        "ceiling_mount": false
+      },
+      "monitor_zones": []
+    },
+    "room_radar_right": {
+      "map_group": "default",
+      "paused": false,
+      "layout": {
+        "origin_x": 50,
+        "origin_y": 50,
+        "rotation": 90,
+        "scale_x": 25,
+        "scale_y": 10,
+        "mount_height": 2.5,
+        "radar_type": 3,
+        "ceiling_mount": false
+      },
+      "monitor_zones": []
+    }
+  }
+}

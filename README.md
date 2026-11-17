@@ -21,6 +21,13 @@ This repository contains **generic examples only**. No user credentials, network
 
 **Important:** This fork has the same integration domain as upstream (`radar_map_manager`). Back up your Home Assistant setup, then replace the upstream integration rather than installing both.
 
+## ESPHome firmware for two LD6004 radars
+
+- [Generic ESP32-C3 dual UART configuration](esphome/dual_ld6004_esp32c3.yaml)
+- [First flash, pinout and setup guide (Italian)](esphome/LEGGIMI_FIRMWARE.md)
+
+Requires ESPHome 2026.11 beta (or a later stable release with built-in LD6004). All Wi-Fi and encryption credentials stay in the local ESPHome `secrets.yaml` file. GPIOs must be checked against the exact board, and radar modules need a separately rated 3.3 V power supply. **This firmware has not yet been hardware-tested.**
+
 ## Sensor requirements
 
 For each radar configured with a prefix such as `room_radar_left`, publish:

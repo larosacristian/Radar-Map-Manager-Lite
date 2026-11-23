@@ -116,10 +116,23 @@ def _safe_floorplan(value):
             y = _safe_number(item.get("y"), 0, height)
             w = _safe_number(item.get("w"), 0.1, width)
             h = _safe_number(item.get("h"), 0.1, height)
-            if None in (x, y, w, h) or x + w > width + 0.001 or y + h > height + 0.001:
+            rotation = _safe_number(item.get("rotation", 0), -360, 360)
+            if None in (x, y, w, h, rotation):
                 continue
-            clean_items.append({"kind": kind, "x": x, "y": y,
-                                "w": w, "h": h})
+            rotation %= 360
+            angle = math.radians(rotation)
+            half_x = (w * abs(math.cos(angle)) + h * abs(math.sin(angle))) / 2
+            half_y = (w * abs(math.sin(angle)) + h * abs(math.cos(angle))) / 2
+            cx, cy = x + w / 2, y + h / 2
+            if (x + w > width + 0.001 or y + h > height + 0.001
+                    or cx - half_x < -0.001 or cy - half_y < -0.001
+                    or cx + half_x > width + 0.001
+                    or cy + half_y > height + 0.001):
+                continue
+            clean = {"kind": kind, "x": x, "y": y, "w": w, "h": h}
+            if rotation:
+                clean["rotation"] = rotation
+            clean_items.append(clean)
     return {"width": width, "height": height, "items": clean_items}
 
 

@@ -560,8 +560,11 @@ export class RadarUI {
             this.root.appendChild(style);
         }
         style.textContent = `
-            :host { display: block; position: relative; overflow: hidden; width: 100%; height: 100%; isolation: isolate; }
-            #root { position: relative; width: 100%; height: 100%; user-select: none; overflow: hidden; box-sizing: border-box; }
+            :host { display: block; position: relative; overflow: hidden; width: 100%;
+                height: var(--rmm-map-height, 380px); min-height: 320px;
+                box-sizing: border-box; isolation: isolate; }
+            #root { position: relative; width: 100%; height: 100%; min-height: 320px;
+                user-select: none; overflow: hidden; box-sizing: border-box; }
             @keyframes rmmFallPulse {
                 0% { transform: translateX(-50%) scale(1); }
                 50% { transform: translateX(-50%) scale(1.04); }

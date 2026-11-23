@@ -30,9 +30,11 @@ The **Devices & services** integration page shows the hub and entities, not the 
 4. Choose **Select / Move** to reposition objects, or enter their exact coordinates and sizes.
 5. Click **Save in Home Assistant**. The floorplan persists locally in the integration's storage and appears beneath radar targets and zones.
 
+Editor v1.5.0 includes a prominent **Select / Move** button in both the drawing controls and canvas toolbar. After inserting furniture, the tool switches to selection automatically. Drag the object to move it; use the square corner handle to resize, the round handle to rotate (15° snapping with grid), or the numeric width/depth and rotation fields for precise values. Wall/door/window endpoints are draggable too. Rotate selected objects by 90° or duplicate an object from the selection controls. Rotated furniture angles are stored locally, constrained to room bounds, and preserved in JSON exports and Home Assistant backups.
+
 The editor also supports snapping to 10 cm, undo, delete, clear, and offline JSON import/export. You can try the [generic 10 × 4 m floorplan](examples/floorplan_10x4.json) by downloading it and using **Import JSON** within the editor. This imports *only the floorplan*; it does not overwrite radar registrations or automation settings. Real-time radar status and people tracking require ESPHome later; drawing does not.
 
-After HACS updates to version **1.4.1**, restart Home Assistant and hard-refresh the dashboard browser to load the updated card. The card reserves 380 px height even in HA section dashboards with no configured radar; this prevents the map from collapsing when leaving dashboard edit mode. A new **update_floorplan** HA action saves the data. This is a 2D plan editor, not an automatic 3D room scan.
+After HACS updates to version **1.5.0**, restart Home Assistant and hard-refresh the dashboard browser to load the updated card. The card reserves 380 px height even in HA section dashboards with no configured radar; this prevents the map from collapsing when leaving dashboard edit mode. A new **update_floorplan** HA action saves the data. This is a 2D plan editor, not an automatic 3D room scan.
 
 **Important:** This fork has the same integration domain as upstream (`radar_map_manager`). Back up your Home Assistant setup, then replace the upstream integration rather than installing both.
 
@@ -79,7 +81,7 @@ This is a 2D top-down room view with optional Z/height readings, **not** a fully
 
 No static inspection can guarantee that software is free of all bugs. This fork has not yet been validated on real Home Assistant hardware and should not be used as a safety or fall-detection device.
 
-Run offline tests with `python -m unittest discover -s test -v`.
+Run offline tests with `python -m unittest discover -s test -v` and `node test/test_floorplan_editor.mjs`.
 
 ## Documentation and license
 

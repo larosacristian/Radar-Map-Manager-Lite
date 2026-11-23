@@ -30,6 +30,11 @@ CONFIG_KEYS = frozenset((
     "show_pointcloud", "show_radar_fov", "show_radar_labels",
     "show_coordinates", "show_grid", "grid_size",
 ))
+FLOORPLAN_SEGMENTS = frozenset(("wall", "door", "window"))
+FLOORPLAN_FURNITURE = frozenset((
+    "sofa", "table", "kitchen", "chair", "bed", "cabinet", "desk", "other",
+))
+MAX_FLOORPLAN_ITEMS = 120
 
 
 def _safe_number(value, lo=-10000.0, hi=10000.0):
@@ -79,6 +84,45 @@ def _safe_zones(value):
     return clean
 
 
+def _safe_floorplan(value):
+    """Only bounded room geometry survives storage and imports. Never URLs/HTML."""
+    if not isinstance(value, dict):
+        return None
+    width = _safe_number(value.get("width"), 1, 100)
+    height = _safe_number(value.get("height"), 1, 100)
+    if width is None or height is None:
+        return None
+    items = value.get("items", [])
+    if not isinstance(items, list):
+        return None
+    clean_items = []
+    for item in items[:MAX_FLOORPLAN_ITEMS]:
+        if not isinstance(item, dict):
+            continue
+        kind = item.get("kind")
+        if kind in FLOORPLAN_SEGMENTS:
+            x1 = _safe_number(item.get("x1"), 0, width)
+            y1 = _safe_number(item.get("y1"), 0, height)
+            x2 = _safe_number(item.get("x2"), 0, width)
+            y2 = _safe_number(item.get("y2"), 0, height)
+            if None in (x1, y1, x2, y2):
+                continue
+            if math.hypot(x2 - x1, y2 - y1) < 0.05:
+                continue
+            clean_items.append({"kind": kind, "x1": x1, "y1": y1,
+                                "x2": x2, "y2": y2})
+        elif kind in FLOORPLAN_FURNITURE:
+            x = _safe_number(item.get("x"), 0, width)
+            y = _safe_number(item.get("y"), 0, height)
+            w = _safe_number(item.get("w"), 0.1, width)
+            h = _safe_number(item.get("h"), 0.1, height)
+            if None in (x, y, w, h) or x + w > width + 0.001 or y + h > height + 0.001:
+                continue
+            clean_items.append({"kind": kind, "x": x, "y": y,
+                                "w": w, "h": h})
+    return {"width": width, "height": height, "items": clean_items}
+
+
 def sanitize_config(candidate):
     """Validate imported/stored geometry and drop all unknown fields."""
     candidate = candidate if isinstance(candidate, dict) else {}
@@ -109,6 +153,9 @@ def sanitize_config(candidate):
                 "zones": {k: _safe_zones(v) for k, v in zones.items() if k in ZONE_KEYS},
                 "config": safe_cfg,
             }
+            floorplan = _safe_floorplan(group.get("floorplan"))
+            if floorplan is not None:
+                maps[name]["floorplan"] = floorplan
     if "default" not in maps:
         maps["default"] = {"zones": {}, "config": {}}
     radars = {}
@@ -264,4 +311,13 @@ class RadarCoordinator:
             self.data["maps"][map_group]["config"] = {}
         safe_data = {k: v for k, v in config_data.items() if k != "map_group"}
         self.data["maps"][map_group]["config"].update(safe_data)
+        await self.async_save()
+
+    async def async_update_floorplan(self, map_group, floorplan):
+        safe = _safe_floorplan(floorplan)
+        if safe is None:
+            raise ValueError("Invalid room geometry")
+        if map_group not in self.data["maps"]:
+            self.data["maps"][map_group] = {"zones": {}, "config": {}}
+        self.data["maps"][map_group]["floorplan"] = safe
         await self.async_save()

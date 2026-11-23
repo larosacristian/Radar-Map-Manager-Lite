@@ -100,6 +100,44 @@ class LiteTests(unittest.TestCase):
         engine = fusion_module.FusionEngine(hass)
         self.assertIsNone(engine._get_radar_point("radar", 1))
 
+    def test_floorplan_roundtrip_without_radar(self):
+        source = {
+            "maps": {"default": {
+                "floorplan": {
+                    "width": 10, "height": 4,
+                    "items": [
+                        {"kind": "wall", "x1": 0, "y1": 0, "x2": 10, "y2": 0},
+                        {"kind": "sofa", "x": 0.3, "y": 2.5, "w": 2, "h": 0.9},
+                    ]
+                }
+            }},
+            "radars": {},
+        }
+        safe = coordinator_module.sanitize_config(source)
+        self.assertEqual(safe["radars"], {})
+        self.assertEqual(safe["maps"]["default"]["floorplan"], source["maps"]["default"]["floorplan"])
+        restored = coordinator_module.sanitize_config(json.loads(json.dumps(safe)))
+        self.assertEqual(restored, safe)
+
+    def test_floorplan_filters_unsafe_data(self):
+        source = {"maps": {"default": {"floorplan": {
+            "width": 10, "height": 4, "remote_url": "https://example.invalid/data",
+            "items": [
+                {"kind": "sofa", "x": 1, "y": 1, "w": 2, "h": 1,
+                 "innerHTML": "<script>alert(1)</script>", "name": "secret"},
+                {"kind": "iframe", "x": 0, "y": 0, "w": 1, "h": 1},
+                {"kind": "wall", "x1": 0, "y1": 0, "x2": 12, "y2": 3},
+                {"kind": "chair", "x": 9.7, "y": 3.7, "w": .7, "h": .7},
+                {"kind": "door", "x1": 1, "y1": 2, "x2": 2, "y2": 2},
+                {"kind": "bed", "x": None, "y": 0, "w": 2, "h": 1},
+            ]
+        }}}, "radars": {}}
+        result = coordinator_module.sanitize_config(source)
+        floorplan = result["maps"]["default"]["floorplan"]
+        self.assertEqual([item["kind"] for item in floorplan["items"]], ["sofa", "door"])
+        self.assertNotIn("example.invalid", json.dumps(result))
+        self.assertNotIn("script", json.dumps(result))
+
 
 if __name__ == "__main__":
     unittest.main()

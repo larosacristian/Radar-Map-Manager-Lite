@@ -17,7 +17,22 @@ This repository contains **generic examples only**. No user credentials, network
    ```yaml
    type: custom:radar-map-card
    map_group: default
+   title: Room Radar
    ```
+
+### Draw your room before connecting any radar
+
+The **Devices & services** integration page shows the hub and entities, not the map editor. Open the Lovelace card above in a dashboard and click the **🏠 room button** at the top right to open the independent floorplan editor.
+
+1. Enter the room's dimensions in metres (for example, `10 × 4`).
+2. Choose **Wall**, **Door** or **Window** and click their start and end points.
+3. Choose **Sofa**, **Table**, **Kitchen**, **Chair**, **Bed**, **Cabinet**, **Desk** or **Other** to place furniture.
+4. Choose **Select / Move** to reposition objects, or enter their exact coordinates and sizes.
+5. Click **Save in Home Assistant**. The floorplan persists locally in the integration's storage and appears beneath radar targets and zones.
+
+The editor also supports snapping to 10 cm, undo, delete, clear, and offline JSON import/export. You can try the [generic 10 × 4 m floorplan](examples/floorplan_10x4.json) by downloading it and using **Import JSON** within the editor. This imports *only the floorplan*; it does not overwrite radar registrations or automation settings. Real-time radar status and people tracking require ESPHome later; drawing does not.
+
+After HACS updates to version **1.4.0**, restart Home Assistant and hard-refresh the dashboard browser to load the updated card. A new **update_floorplan** HA action saves the data. This is a 2D plan editor, not an automatic 3D room scan.
 
 **Important:** This fork has the same integration domain as upstream (`radar_map_manager`). Back up your Home Assistant setup, then replace the upstream integration rather than installing both.
 
@@ -47,6 +62,7 @@ Radar devices are added using the `radar_map_manager.add_radar` HA action with t
 The [examples](examples) directory includes:
 
 - [Two radar layout for a 10 × 4 m rectangle](examples/dual_radar_room_10x4.json): left, center and right virtual zones. Positions, scale, mounting height and rotations **must be calibrated** for the real installation.
+- [Editable 10 × 4 m floorplan](examples/floorplan_10x4.json) for the floorplan editor (no radar required).
 - [Occupancy lighting automations](examples/occupancy_lighting.yaml), with placeholder light entities.
 - [Optional RGB scenes](examples/rgb_scenes.yaml), never activated automatically.
 - [Lovelace card](examples/lovelace_card.yaml).

@@ -37,7 +37,7 @@ Sono stati eseguiti test unitari e verifiche statiche; **manca il collaudo con H
 
 La schermata **Impostazioni → Dispositivi e servizi → Radar Map Manager Lite** mostra l'hub e le entità: l'editor non è lì. Lo trovi aprendo la **scheda Radar Map** che hai inserito nella dashboard al punto 6.
 
-1. Dopo aver aggiornato l'integrazione a **1.4.0**, **riavvia Home Assistant** e ricarica completamente la pagina della dashboard (Ctrl+F5 da PC).
+1. Dopo aver aggiornato l'integrazione a **1.4.1**, **riavvia Home Assistant** e ricarica completamente la pagina della dashboard (Ctrl+F5 da PC). La versione 1.4.1 evita che la scheda scompaia nelle dashboard a sezioni dopo aver premuto **Fatto**: riserva uno spazio iniziale di 380 px anche quando non ci sono radar collegati.
 2. Nella scheda premi **🏠** in alto a destra, vicino all'ingranaggio **⚙️**. Il disegno si apre anche quando non ci sono radar.
 3. Inserisci le misure in metri, ad esempio **10 m di lunghezza × 4 m di larghezza**, e premi **Applica dimensioni**.
 4. Seleziona **Parete**, **Porta** o **Finestra**, poi clicca il punto iniziale e quello finale sul disegno. Per aggiungere **Divano**, **Tavolo**, **Cucina**, ecc., basta un clic.

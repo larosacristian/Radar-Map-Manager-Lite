@@ -138,6 +138,18 @@ class LiteTests(unittest.TestCase):
         self.assertNotIn("example.invalid", json.dumps(result))
         self.assertNotIn("script", json.dumps(result))
 
+    def test_rotated_furniture_is_preserved_and_clipped_shapes_rejected(self):
+        payload = {"width": 5, "height": 4, "items": [
+            {"kind": "sofa", "x": 1, "y": 1, "w": 2, "h": 1, "rotation": 90},
+            {"kind": "table", "x": 0, "y": 0, "w": 2, "h": 1, "rotation": 45},
+            {"kind": "chair", "x": 2, "y": 2, "w": 0.5, "h": 0.5,
+             "rotation": "<script>malicious</script>"},
+        ]}
+        result = coordinator_module._safe_floorplan(payload)
+        self.assertEqual(len(result["items"]), 1)
+        self.assertEqual(result["items"][0]["rotation"], 90)
+        self.assertEqual(result["items"][0]["kind"], "sofa")
+
 
 if __name__ == "__main__":
     unittest.main()

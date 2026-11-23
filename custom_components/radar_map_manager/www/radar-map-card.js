@@ -1,8 +1,8 @@
-import { RadarMath } from './radar-math.js?v=lite-2';
-import { RadarUI } from './radar-ui.js?v=lite-2';
-import { RadarRenderer } from './radar-renderer.js?v=lite-2';
-import { RadarEditor } from './radar-editor.js?v=lite-2';
-import { RadarFloorplanEditor } from './radar-floorplan-editor.js?v=lite-2';
+import { RadarMath } from './radar-math.js?v=lite-3';
+import { RadarUI } from './radar-ui.js?v=lite-3';
+import { RadarRenderer } from './radar-renderer.js?v=lite-3';
+import { RadarEditor } from './radar-editor.js?v=lite-3';
+import { RadarFloorplanEditor } from './radar-floorplan-editor.js?v=lite-3';
 const CARD_I18N = {
     "proxy_ok": { "zh": "[RMM VIP] 雷达 {0} 代理认证成功！专属高频点云已通过 HA 隧道激活。", "en": "[RMM VIP] Radar {0} proxy auth successful! Exclusive high-frequency point cloud activated via HA tunnel." },
     "proxy_fail": { "zh": "[RMM VIP] 代理中继连接失败 ({0})，已静默降级为 MQTT 模式。", "en": "[RMM VIP] Proxy relay connection failed ({0}), silently downgraded to MQTT mode." }
@@ -81,7 +81,9 @@ class RadarMapCardNative extends HTMLElement {
         return this._ha_layout;
     }
     getGridOptions() {
-        return { columns: 12, rows: "auto" };
+        // A numeric row count reserves space in HA Sections even before any
+        // ESPHome radar entities have been configured.
+        return { columns: 12, rows: 6, min_rows: 5 };
     }
     disconnectedCallback() {
         this.resizeObserver.disconnect();
@@ -102,7 +104,7 @@ class RadarMapCardNative extends HTMLElement {
         return { type: "custom:radar-map-card", map_group: "default" };
     }
     getCardSize() {
-        return 5;
+        return 8;
     }
     setConfig(config) {
         this.config = config;

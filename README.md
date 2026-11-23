@@ -32,7 +32,7 @@ The **Devices & services** integration page shows the hub and entities, not the 
 
 The editor also supports snapping to 10 cm, undo, delete, clear, and offline JSON import/export. You can try the [generic 10 × 4 m floorplan](examples/floorplan_10x4.json) by downloading it and using **Import JSON** within the editor. This imports *only the floorplan*; it does not overwrite radar registrations or automation settings. Real-time radar status and people tracking require ESPHome later; drawing does not.
 
-After HACS updates to version **1.4.0**, restart Home Assistant and hard-refresh the dashboard browser to load the updated card. A new **update_floorplan** HA action saves the data. This is a 2D plan editor, not an automatic 3D room scan.
+After HACS updates to version **1.4.1**, restart Home Assistant and hard-refresh the dashboard browser to load the updated card. The card reserves 380 px height even in HA section dashboards with no configured radar; this prevents the map from collapsing when leaving dashboard edit mode. A new **update_floorplan** HA action saves the data. This is a 2D plan editor, not an automatic 3D room scan.
 
 **Important:** This fork has the same integration domain as upstream (`radar_map_manager`). Back up your Home Assistant setup, then replace the upstream integration rather than installing both.
 

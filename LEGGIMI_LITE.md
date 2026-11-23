@@ -37,12 +37,20 @@ Sono stati eseguiti test unitari e verifiche statiche; **manca il collaudo con H
 
 La schermata **Impostazioni → Dispositivi e servizi → Radar Map Manager Lite** mostra l'hub e le entità: l'editor non è lì. Lo trovi aprendo la **scheda Radar Map** che hai inserito nella dashboard al punto 6.
 
-1. Dopo aver aggiornato l'integrazione a **1.4.1**, **riavvia Home Assistant** e ricarica completamente la pagina della dashboard (Ctrl+F5 da PC). La versione 1.4.1 evita che la scheda scompaia nelle dashboard a sezioni dopo aver premuto **Fatto**: riserva uno spazio iniziale di 380 px anche quando non ci sono radar collegati.
+1. Dopo aver aggiornato l'integrazione a **1.5.0**, **riavvia Home Assistant** e ricarica completamente la pagina della dashboard (Ctrl+F5 da PC). La scheda mantiene lo spazio riservato nelle dashboard a sezioni anche quando non ci sono radar collegati.
 2. Nella scheda premi **🏠** in alto a destra, vicino all'ingranaggio **⚙️**. Il disegno si apre anche quando non ci sono radar.
 3. Inserisci le misure in metri, ad esempio **10 m di lunghezza × 4 m di larghezza**, e premi **Applica dimensioni**.
 4. Seleziona **Parete**, **Porta** o **Finestra**, poi clicca il punto iniziale e quello finale sul disegno. Per aggiungere **Divano**, **Tavolo**, **Cucina**, ecc., basta un clic.
 5. Usa **Seleziona / sposta** per trascinare gli oggetti, oppure inserisci coordinate e dimensioni esatte nei campi dell'elemento selezionato.
 6. Premi **Salva in Home Assistant**. Pareti e arredi compariranno come sfondo della mappa e rimarranno salvati ai riavvii di HA.
+
+**Spostare, dimensionare e ruotare (dalla versione 1.5.0)**
+
+- Premi il pulsante **✥ Seleziona / sposta**, ben visibile sopra la piantina e nel pannello a sinistra. Dopo aver aggiunto un mobile l'editor passa automaticamente a questa modalità, evitando inserimenti multipli per errore.
+- Clicca il mobile e **trascinalo** per spostarlo. Usa il **quadratino nell'angolo** per ingrandirlo o ridurlo, oppure inserisci lunghezza e profondità esatte nei campi dell'elemento selezionato.
+- Trascina il **cerchio azzurro** del mobile per ruotarlo; con la griglia attiva si aggancia ogni 15°. Puoi anche inserire l'angolo in gradi oppure premere i pulsanti **Ruota −90° / +90°**.
+- Le pareti, porte e finestre possono essere trascinate. Quando sono selezionate, i due punti gialli ne modificano gli estremi. **Duplica** crea una copia di un elemento da riposizionare.
+- Tutte le modifiche sono annullabili. Dopo aver sistemato la piantina premi **Salva in Home Assistant**. La rotazione viene conservata anche nel JSON e nei backup della mappa.
 
 Sono disponibili **Annulla ultima modifica**, **Elimina selezionato**, griglia con aggancio a 10 cm, **Esporta JSON** e **Importa JSON**. Per iniziare con una stanza dimostrativa scarica [`examples/floorplan_10x4.json`](examples/floorplan_10x4.json), quindi usa **Importa JSON** nell'editor. L'importazione tramite editor cambia solo la piantina: non cancella radar, zone o altre configurazioni.
 

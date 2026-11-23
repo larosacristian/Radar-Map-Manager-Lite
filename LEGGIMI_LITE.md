@@ -9,6 +9,7 @@ Questa è una versione generica e locale di Radar Map Manager per integrare uno 
 - Calibrazione software di posizione, rotazione, altezza di montaggio e scale.
 - Visualizzazione dell'altezza solo quando è disponibile una vera coordinata Z.
 - Esempi di automazioni luci e scene RGB, indipendenti dai radar.
+- Editor visuale delle piantine con misure in metri, pareti, porte, finestre e mobili. Funziona anche senza radar e salva in Home Assistant.
 
 La mappa è **2D con eventuale quota Z**; non ricostruisce pareti o mobili in 3D.
 
@@ -31,6 +32,21 @@ Sono stati eseguiti test unitari e verifiche statiche; **manca il collaudo con H
    type: custom:radar-map-card
    map_group: default
    ```
+
+### Disegnare la stanza senza ESP32
+
+La schermata **Impostazioni → Dispositivi e servizi → Radar Map Manager Lite** mostra l'hub e le entità: l'editor non è lì. Lo trovi aprendo la **scheda Radar Map** che hai inserito nella dashboard al punto 6.
+
+1. Dopo aver aggiornato l'integrazione a **1.4.0**, **riavvia Home Assistant** e ricarica completamente la pagina della dashboard (Ctrl+F5 da PC).
+2. Nella scheda premi **🏠** in alto a destra, vicino all'ingranaggio **⚙️**. Il disegno si apre anche quando non ci sono radar.
+3. Inserisci le misure in metri, ad esempio **10 m di lunghezza × 4 m di larghezza**, e premi **Applica dimensioni**.
+4. Seleziona **Parete**, **Porta** o **Finestra**, poi clicca il punto iniziale e quello finale sul disegno. Per aggiungere **Divano**, **Tavolo**, **Cucina**, ecc., basta un clic.
+5. Usa **Seleziona / sposta** per trascinare gli oggetti, oppure inserisci coordinate e dimensioni esatte nei campi dell'elemento selezionato.
+6. Premi **Salva in Home Assistant**. Pareti e arredi compariranno come sfondo della mappa e rimarranno salvati ai riavvii di HA.
+
+Sono disponibili **Annulla ultima modifica**, **Elimina selezionato**, griglia con aggancio a 10 cm, **Esporta JSON** e **Importa JSON**. Per iniziare con una stanza dimostrativa scarica [`examples/floorplan_10x4.json`](examples/floorplan_10x4.json), quindi usa **Importa JSON** nell'editor. L'importazione tramite editor cambia solo la piantina: non cancella radar, zone o altre configurazioni.
+
+Nota: le tre zone di presenza (sinistra, centro e destra) sono gestite separatamente dalle pareti e dai mobili. Finché l'ESP32 e i radar non sono programmati, puoi costruire la piantina ma non vedrai persone o distanze in tempo reale. La visualizzazione è **2D dall'alto**.
 
 Se usi l'installazione manuale, copia `custom_components/radar_map_manager` in `/config/custom_components/radar_map_manager` e riavvia HA.
 

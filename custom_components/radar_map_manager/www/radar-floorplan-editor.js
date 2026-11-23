@@ -72,6 +72,22 @@ export class RadarFloorplanEditor {
                 #rmm-floorplan-dialog .fp-primary { background: #087f9e; border-color: #25b6d3; font-weight: 700; }
                 #rmm-floorplan-dialog .fp-danger { background: #713747; border-color: #b76578; }
                 #rmm-floorplan-dialog .fp-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+                #rmm-floorplan-dialog .fp-select-main { width: 100%; display: flex;
+                    justify-content: center; gap: 9px; align-items: center; font-weight: 750;
+                    font-size: 14px; padding: 11px 8px; border: 2px solid #64cce8;
+                    background: #184c65; }
+                #rmm-floorplan-dialog .fp-select-main.active { background: #0a819f;
+                    box-shadow: inset 0 0 0 1px #9be7f6; }
+                #rmm-floorplan-dialog .fp-tool-note { color: #b7d6e3; font-size: 11px; margin: 0; }
+                #rmm-floorplan-dialog .fp-handle { cursor: nwse-resize; }
+                #rmm-floorplan-dialog .fp-rotate-handle { cursor: grab; }
+                #rmm-floorplan-dialog .fp-item-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+                #rmm-floorplan-dialog .fp-item-buttons button { padding: 7px 4px; }
+                #rmm-floorplan-dialog .fp-quick-toolbar { display: flex; gap: 8px;
+                    flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
+                #rmm-floorplan-dialog .fp-quick-toolbar button { min-height: 33px; }
+                #rmm-floorplan-dialog .fp-quick-toolbar .active { background: #0a819f;
+                    border-color: #71e7ff; }
                 #rmm-floorplan-dialog .fp-stage { position: relative; min-width: 0; min-height: 0;
                     display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px;
                     background: radial-gradient(circle at 50% 25%, #243750, #101825 75%); }
@@ -111,8 +127,11 @@ export class RadarFloorplanEditor {
                   </fieldset>
                   <fieldset>
                     <legend>Disegno</legend>
+                    <button id="fp-select-mode" class="fp-select-main" type="button" aria-pressed="false">✥ Seleziona e sposta</button>
+                    <p class="fp-tool-note">Scegli un elemento: trascina per spostarlo, usa le maniglie per cambiarne forma o orientamento.</p>
                     <label>Strumento
                     <select id="fp-tool">
+                      <option value="select">Seleziona / sposta</option>
                       <option value="wall">Parete</option>
                       <option value="door">Porta</option>
                       <option value="window">Finestra</option>
@@ -124,7 +143,6 @@ export class RadarFloorplanEditor {
                       <option value="cabinet">Mobile</option>
                       <option value="desk">Scrivania</option>
                       <option value="other">Altro</option>
-                      <option value="select">Seleziona / sposta</option>
                     </select></label>
                     <label><input id="fp-snap" type="checkbox" checked> Griglia e aggancio ogni 10 cm</label>
                     <div class="fp-actions">
@@ -140,7 +158,16 @@ export class RadarFloorplanEditor {
                       <label id="fp-label-w">Larghezza (m)<input id="fp-item-w" type="number" min="0.1" step="0.1"></label>
                       <label id="fp-label-h">Profondità (m)<input id="fp-item-h" type="number" min="0.1" step="0.1"></label>
                     </div>
+                    <label id="fp-label-rotation" class="fp-hidden">Rotazione (gradi)
+                      <input id="fp-item-rotation" type="number" min="0" max="359" step="1" value="0">
+                    </label>
                     <button id="fp-apply-item">Applica misure</button>
+                    <div class="fp-item-buttons" style="margin-top:7px">
+                      <button id="fp-turn-left" type="button">↶ Ruota −90°</button>
+                      <button id="fp-turn-right" type="button">↷ Ruota +90°</button>
+                      <button id="fp-duplicate" type="button">Duplica</button>
+                      <button id="fp-delete-quick" class="fp-danger" type="button">Elimina</button>
+                    </div>
                   </fieldset>
                   <fieldset>
                     <legend>Salvataggi</legend>
@@ -151,9 +178,15 @@ export class RadarFloorplanEditor {
                     </div>
                     <button id="fp-clear" class="fp-danger">Rimuovi tutti gli elementi</button>
                   </fieldset>
-                  <p class="fp-help">Pareti, porte e finestre: clicca il punto iniziale e quello finale. Mobili: un clic per inserirli. Seleziona / sposta per trascinare.</p>
+                  <p class="fp-help">Pareti, porte e finestre: due clic. Mobili: un clic per aggiungerli, poi passa automaticamente a Seleziona. Trascina il corpo per spostare, il quadratino per ridimensionare, il cerchio per ruotare. Tutte le misure sono in metri.</p>
                 </div>
                 <div class="fp-stage">
+                  <div class="fp-quick-toolbar">
+                    <button id="fp-stage-select" type="button">✥ Seleziona / sposta</button>
+                    <button id="fp-stage-left" type="button">↶ 90°</button>
+                    <button id="fp-stage-right" type="button">↷ 90°</button>
+                    <button id="fp-stage-delete" type="button">Elimina</button>
+                  </div>
                   <div class="fp-readout" id="fp-meters"></div>
                   <div class="fp-stage-scroller">
                       <svg id="fp-svg" class="fp-canvas" viewBox="0 0 10 4" aria-label="Piantina modificabile"></svg>
@@ -169,14 +202,23 @@ export class RadarFloorplanEditor {
         this.$ = $;
         $('fp-close').addEventListener('click', () => this.close());
         $('fp-save').addEventListener('click', () => this.save());
-        $('fp-tool').addEventListener('change', (ev) => {
-            this.tool = ev.target.value; this.anchor = null; this.selected = -1;
-            this.renderEditor();
+        $('fp-tool').addEventListener('change', (ev) => this.setTool(ev.target.value));
+        $('fp-select-mode').addEventListener('click', () => {
+            this.setTool('select');
+            this.status('Seleziona un elemento, poi trascinalo o usa le maniglie.');
         });
+        $('fp-stage-select').addEventListener('click', () => this.setTool('select'));
+        $('fp-stage-left').addEventListener('click', () => this.rotateSelected(-90));
+        $('fp-stage-right').addEventListener('click', () => this.rotateSelected(90));
+        $('fp-stage-delete').addEventListener('click', () => this.removeSelected());
         $('fp-snap').addEventListener('change', (ev) => { this.grid = ev.target.checked; this.renderEditor(); });
         $('fp-resize').addEventListener('click', () => this.resizeRoom());
         $('fp-undo').addEventListener('click', () => this.undo());
         $('fp-delete').addEventListener('click', () => this.removeSelected());
+        $('fp-delete-quick').addEventListener('click', () => this.removeSelected());
+        $('fp-turn-left').addEventListener('click', () => this.rotateSelected(-90));
+        $('fp-turn-right').addEventListener('click', () => this.rotateSelected(90));
+        $('fp-duplicate').addEventListener('click', () => this.duplicateSelected());
         $('fp-apply-item').addEventListener('click', () => this.applyItemValues());
         $('fp-clear').addEventListener('click', () => {
             if (!this.draft.items.length || !window.confirm('Rimuovere tutti gli elementi della piantina?')) return;
@@ -203,6 +245,43 @@ export class RadarFloorplanEditor {
         const n = Number(value);
         return Number.isFinite(n) ? n : fallback;
     }
+    _angle(item) { return this._num(item.rotation, 0); }
+    _normAngle(deg) { return this._round(((deg % 360) + 360) % 360); }
+    _furnitureBounds(item) {
+        const theta = this._angle(item) * Math.PI / 180;
+        const c = Math.abs(Math.cos(theta)), s = Math.abs(Math.sin(theta));
+        const halfX = (item.w*c + item.h*s)/2;
+        const halfY = (item.w*s + item.h*c)/2;
+        return {cx:item.x+item.w/2, cy:item.y+item.h/2, halfX, halfY};
+    }
+    _fitsFurniture(item, width, height) {
+        if (!Number.isFinite(item.x) || !Number.isFinite(item.y) ||
+            !Number.isFinite(item.w) || !Number.isFinite(item.h) ||
+            item.w < .1 || item.h < .1 || item.x < -.001 || item.y < -.001 ||
+            item.x+item.w > width+.001 || item.y+item.h > height+.001) return false;
+        const b=this._furnitureBounds(item);
+        return b.cx-b.halfX >= -.001 && b.cy-b.halfY >= -.001 &&
+            b.cx+b.halfX <= width+.001 && b.cy+b.halfY <= height+.001;
+    }
+    _fitRotatedPosition(item, angle) {
+        const next={...item,rotation:this._normAngle(angle)};
+        const b=this._furnitureBounds(next), width=this.draft.width, height=this.draft.height;
+        const left=Math.max(b.halfX,next.w/2), right=width-left;
+        const top=Math.max(b.halfY,next.h/2), bottom=height-top;
+        if (left>right+.001 || top>bottom+.001) return null;
+        const cx=this._limit(b.cx,left,right);
+        const cy=this._limit(b.cy,top,bottom);
+        next.x=this._round(cx-next.w/2); next.y=this._round(cy-next.h/2);
+        return this._fitsFurniture(next,width,height)?next:null;
+    }
+    setTool(tool) {
+        if (tool!=='select' && !SEGMENTS.has(tool) && !Object.hasOwn(FURNITURE,tool)) return;
+        this.tool=tool;
+        this.anchor=null;
+        if (tool!=='select') this.selected=-1;
+        if (this.dialog) this.$('fp-tool').value=tool;
+        this.renderEditor();
+    }
     _normalize(plan) {
         if (!plan || typeof plan !== 'object') return {width: 10, height: 4, items: []};
         const width = this._limit(this._num(plan.width, 10), 1, 100);
@@ -222,8 +301,13 @@ export class RadarFloorplanEditor {
                 const values = ['x','y','w','h'].map(k => this._num(item[k], NaN));
                 if (!values.every(Number.isFinite)) continue;
                 const [x,y,w,h] = values;
-                if (x < 0 || y < 0 || w < .1 || h < .1 || x+w > width+.001 || y+h > height+.001) continue;
-                result.items.push({kind:item.kind,x,y,w,h});
+                const rawAngle=item.rotation===undefined?0:this._num(item.rotation,NaN);
+                if (!Number.isFinite(rawAngle) || rawAngle < -360 || rawAngle > 360) continue;
+                const rotation=this._normAngle(rawAngle);
+                const next={kind:item.kind,x,y,w,h};
+                if (rotation) next.rotation=rotation;
+                if (!this._fitsFurniture(next,width,height)) continue;
+                result.items.push(next);
             }
         }
         return result;
@@ -239,7 +323,10 @@ export class RadarFloorplanEditor {
         const layer = this.root.getElementById('floorplan-layer');
         if (!layer) return;
         layer.replaceChildren();
-        if (this.saved) this.drawShapes(layer, this.saved, true, false);
+        if (this.saved) {
+            layer.setAttribute('viewBox',`0 0 ${this.saved.width} ${this.saved.height}`);
+            this.drawShapes(layer, this.saved, false, false);
+        }
     }
     open() {
         this.mount();
@@ -248,7 +335,7 @@ export class RadarFloorplanEditor {
         this.opened = true; this.dirty = false; this.selected = -1;
         this.anchor = null; this.history = []; this.drag = null;
         this.draft = this._clone(this.saved || {width:10,height:4,items:[]});
-        this.tool = 'wall';
+        this.tool = this.draft.items.length ? 'select' : 'wall';
         this.$('fp-tool').value = this.tool;
         this.$('fp-width').value = this.draft.width;
         this.$('fp-height').value = this.draft.height;
@@ -281,17 +368,22 @@ export class RadarFloorplanEditor {
         if (!(w >= 1 && w <= 100 && h >= 1 && h <= 100)) {
             this.status('Inserisci dimensioni comprese fra 1 e 100 metri.', true); return;
         }
-        this.snapshot();
-        const sx = w / this.draft.width, sy = h / this.draft.height;
-        for (const item of this.draft.items) {
+        const proposed=this._clone(this.draft);
+        const sx = w / proposed.width, sy = h / proposed.height;
+        for (const item of proposed.items) {
             if (SEGMENTS.has(item.kind)) {
                 item.x1 *= sx; item.x2 *= sx; item.y1 *= sy; item.y2 *= sy;
             } else {
                 item.x *= sx; item.w *= sx; item.y *= sy; item.h *= sy;
             }
         }
-        this.draft.width = w; this.draft.height = h;
-        this.draft = this._normalize(this.draft);
+        proposed.width=w;proposed.height=h;
+        const normalized=this._normalize(proposed);
+        if (normalized.items.length!==proposed.items.length) {
+            this.status('Le nuove dimensioni farebbero uscire alcuni mobili dalla stanza. Spostali prima di ridimensionare.',true);
+            return;
+        }
+        this.snapshot();this.draft=normalized;
         this.selected = -1; this.anchor = null;
         this.renderEditor(); this.status('Dimensioni aggiornate. Gli elementi sono stati ridimensionati.');
     }
@@ -309,7 +401,7 @@ export class RadarFloorplanEditor {
         };
     }
     pointerDown(ev) {
-        if (ev.button !== 0 || !this.opened) return;
+        if ((ev.pointerType === 'mouse' && ev.button !== 0) || !this.opened) return;
         const pos = this.svgPoint(ev);
         if (!pos) return;
         if (this.tool === 'select') {
@@ -319,8 +411,14 @@ export class RadarFloorplanEditor {
                 this.drag = {
                     index: this.selected, start: pos,
                     original: this._clone(this.draft.items[this.selected]),
+                    mode: ev.target.closest('[data-fp-handle]')?.dataset.fpHandle || 'move',
                     moved: false,
                 };
+                if (!SEGMENTS.has(this.drag.original.kind)) {
+                    const b=this._furnitureBounds(this.drag.original);
+                    this.drag.center={x:b.cx,y:b.cy};
+                    this.drag.startAngle=Math.atan2(pos.y-b.cy,pos.x-b.cx)*180/Math.PI;
+                }
                 this.$('fp-svg').setPointerCapture(ev.pointerId);
             } else this.drag = null;
             this.renderEditor();
@@ -346,7 +444,10 @@ export class RadarFloorplanEditor {
             this.snapshot();
             this.draft.items.push({kind:this.tool,x:this._round(this._limit(pos.x-w/2,0,this.draft.width-w)),
                 y:this._round(this._limit(pos.y-h/2,0,this.draft.height-h)),w,h});
-            this.status('Mobile aggiunto. Usa Seleziona / sposta per spostarlo.');
+            this.selected=this.draft.items.length-1;
+            this.tool='select';
+            this.$('fp-tool').value='select';
+            this.status('Mobile selezionato: trascinalo, usa la maniglia quadrata o imposta le misure.');
         }
         this.renderEditor();
     }
@@ -356,22 +457,50 @@ export class RadarFloorplanEditor {
         if (!pos) return;
         const deltaX = pos.x - this.drag.start.x;
         const deltaY = pos.y - this.drag.start.y;
-        if (!this.drag.moved && (Math.abs(deltaX)>0.02 || Math.abs(deltaY)>0.02)) {
-            this.snapshot(); this.drag.moved = true;
-        }
-        if (!this.drag.moved) return;
-        const item = this.draft.items[this.drag.index], orig = this.drag.original;
-        if (SEGMENTS.has(item.kind)) {
-            const dx=this._limit(deltaX,-Math.min(orig.x1,orig.x2),
-                this.draft.width-Math.max(orig.x1,orig.x2));
-            const dy=this._limit(deltaY,-Math.min(orig.y1,orig.y2),
-                this.draft.height-Math.max(orig.y1,orig.y2));
-            item.x1=this._round(orig.x1+dx); item.x2=this._round(orig.x2+dx);
-            item.y1=this._round(orig.y1+dy); item.y2=this._round(orig.y2+dy);
+        const orig=this.drag.original;
+        let next={...orig};
+        if (SEGMENTS.has(orig.kind)) {
+            if (this.drag.mode==='start') {
+                next.x1=pos.x; next.y1=pos.y;
+            } else if (this.drag.mode==='end') {
+                next.x2=pos.x; next.y2=pos.y;
+            } else {
+                const dx=this._limit(deltaX,-Math.min(orig.x1,orig.x2),
+                    this.draft.width-Math.max(orig.x1,orig.x2));
+                const dy=this._limit(deltaY,-Math.min(orig.y1,orig.y2),
+                    this.draft.height-Math.max(orig.y1,orig.y2));
+                next.x1=this._round(orig.x1+dx); next.x2=this._round(orig.x2+dx);
+                next.y1=this._round(orig.y1+dy); next.y2=this._round(orig.y2+dy);
+            }
+            if (Math.hypot(next.x2-next.x1,next.y2-next.y1)<.05) return;
+        } else if (this.drag.mode==='rotate') {
+            const current=Math.atan2(pos.y-this.drag.center.y,pos.x-this.drag.center.x)*180/Math.PI;
+            let rotation=this._angle(orig)+current-this.drag.startAngle;
+            if (this.grid) rotation=Math.round(rotation/15)*15;
+            next=this._fitRotatedPosition(orig,rotation);
+            if (!next) return;
+        } else if (this.drag.mode==='resize') {
+            const t=this._angle(orig)*Math.PI/180,c=Math.cos(t),s=Math.sin(t);
+            const localX=deltaX*c+deltaY*s;
+            const localY=-deltaX*s+deltaY*c;
+            const snap=(n)=>this.grid?Math.round(n*10)/10:this._round(n);
+            next.w=snap(Math.max(.1,orig.w+2*localX));
+            next.h=snap(Math.max(.1,orig.h+2*localY));
+            const centerX=orig.x+orig.w/2,centerY=orig.y+orig.h/2;
+            next.x=this._round(centerX-next.w/2); next.y=this._round(centerY-next.h/2);
+            if (!this._fitsFurniture(next,this.draft.width,this.draft.height)) return;
         } else {
-            item.x=this._round(this._limit(orig.x+deltaX,0,this.draft.width-orig.w));
-            item.y=this._round(this._limit(orig.y+deltaY,0,this.draft.height-orig.h));
+            const b=this._furnitureBounds(orig);
+            const minX=Math.max(b.halfX,orig.w/2),minY=Math.max(b.halfY,orig.h/2);
+            const cx=this._limit(b.cx+deltaX,minX,this.draft.width-minX);
+            const cy=this._limit(b.cy+deltaY,minY,this.draft.height-minY);
+            next.x=this._round(cx-orig.w/2);
+            next.y=this._round(cy-orig.h/2);
+            if (!this._fitsFurniture(next,this.draft.width,this.draft.height)) return;
         }
+        if (JSON.stringify(next)===JSON.stringify(this.draft.items[this.drag.index])) return;
+        if (!this.drag.moved) { this.snapshot(); this.drag.moved=true; }
+        this.draft.items[this.drag.index]=next;
         this.renderEditor();
     }
     pointerUp(ev) {
@@ -386,6 +515,48 @@ export class RadarFloorplanEditor {
         this.snapshot(); this.draft.items.splice(this.selected,1);
         this.selected=-1; this.renderEditor();
     }
+    rotateSelected(deg) {
+        const item=this.draft.items[this.selected];
+        if (!item) return;
+        let next={...item};
+        if (SEGMENTS.has(item.kind)) {
+            const t=deg*Math.PI/180,c=Math.cos(t),s=Math.sin(t);
+            const mx=(item.x1+item.x2)/2,my=(item.y1+item.y2)/2;
+            for (const end of ['1','2']) {
+                const x=item['x'+end]-mx,y=item['y'+end]-my;
+                next['x'+end]=this._round(mx+x*c-y*s);
+                next['y'+end]=this._round(my+x*s+y*c);
+            }
+        } else {
+            next=this._fitRotatedPosition(item,this._angle(item)+deg);
+        }
+        if (!next || this._normalize({width:this.draft.width,height:this.draft.height,items:[next]}).items.length!==1) {
+            this.status('Non c’è spazio per ruotare l’elemento entro i confini della stanza.',true);
+            return;
+        }
+        this.snapshot();this.draft.items[this.selected]=next;
+        this.renderEditor();this.status('Elemento ruotato.');
+    }
+    duplicateSelected() {
+        const item=this.draft.items[this.selected];
+        if (!item || this.draft.items.length>=120) return;
+        let next=null;
+        for (const offset of [.3,-.3,.1,-.1]) {
+            const candidate={...item};
+            if (SEGMENTS.has(item.kind)) {
+                candidate.x1+=offset;candidate.x2+=offset;
+                candidate.y1+=offset;candidate.y2+=offset;
+            } else {
+                candidate.x=this._round(candidate.x+offset);
+                candidate.y=this._round(candidate.y+offset);
+            }
+            const valid=this._normalize({width:this.draft.width,height:this.draft.height,items:[candidate]});
+            if (valid.items.length) {next=valid.items[0];break;}
+        }
+        if (!next) {this.status('Sposta prima l’oggetto: non c’è spazio per duplicarlo.',true);return;}
+        this.snapshot();this.draft.items.push(next);this.selected=this.draft.items.length-1;
+        this.setTool('select');this.status('Copia selezionata. Trascinala nella posizione desiderata.');
+    }
     applyItemValues() {
         const item=this.draft.items[this.selected];
         if (!item) return;
@@ -393,6 +564,13 @@ export class RadarFloorplanEditor {
         const controls=['fp-item-x','fp-item-y','fp-item-w','fp-item-h'];
         const next={...item};
         for(let i=0;i<4;i++) next[keys[i]]=this._num(this.$(controls[i]).value,NaN);
+        if (!SEGMENTS.has(item.kind)) {
+            const angle=this._num(this.$('fp-item-rotation').value,NaN);
+            if (!Number.isFinite(angle)||angle<-360||angle>360) {
+                this.status('La rotazione deve essere compresa tra 0° e 359°.',true);return;
+            }
+            next.rotation=this._normAngle(angle);
+        }
         const tmp=this._normalize({width:this.draft.width,height:this.draft.height,items:[next]});
         if (tmp.items.length!==1) { this.status('Misure non valide o fuori stanza.',true); return; }
         this.snapshot(); this.draft.items[this.selected]=tmp.items[0];
@@ -427,9 +605,29 @@ export class RadarFloorplanEditor {
                     ...common,
                 });
                 if (selectable) line.style.cursor='move';
+                if (selectable) {
+                    const hit=this._svg(group,'line',{
+                        x1:item.x1*sx,y1:item.y1*sy,x2:item.x2*sx,y2:item.y2*sy,
+                        stroke:'transparent','stroke-width':22,'vector-effect':'non-scaling-stroke',
+                        'pointer-events':'stroke',
+                    });
+                    hit.style.cursor='move';
+                    if(sel) for(const end of [1,2]) {
+                        const handle=this._svg(group,'circle',{
+                            cx:item['x'+end]*sx,cy:item['y'+end]*sy,r:.10,
+                            fill:'#f8d27c',stroke:'#173047','stroke-width':2,
+                            'vector-effect':'non-scaling-stroke',
+                            'data-fp-handle':end===1?'start':'end',
+                        });
+                        handle.style.cursor='crosshair';
+                    }
+                }
             } else {
                 const [label]=FURNITURE[item.kind];
                 const x=item.x*sx,y=item.y*sy,w=item.w*sx,h=item.h*sy;
+                const angle=this._angle(item);
+                if (angle) group.setAttribute('transform',
+                    `rotate(${angle} ${x+w/2} ${y+h/2})`);
                 const rect=this._svg(group,'rect',{
                     x,y,width:w,height:h,rx:Math.min(w,h)*.08,
                     fill:FURNITURE[item.kind][3], 'fill-opacity':'.70',
@@ -444,6 +642,21 @@ export class RadarFloorplanEditor {
                         'font-size':Math.min(.22,h*.32),fill:'#fff','pointer-events':'none',
                     });
                     t.textContent=label;
+                }
+                if (sel) {
+                    const corner=this._svg(group,'rect',{
+                        x:x+w-.095,y:y+h-.095,width:.19,height:.19,rx:.025,
+                        fill:'#ffe39c',stroke:'#24344e','stroke-width':2,
+                        'vector-effect':'non-scaling-stroke',
+                        'data-fp-handle':'resize',
+                    });
+                    corner.style.cursor='nwse-resize';
+                    const turn=this._svg(group,'circle',{
+                        cx:x+w/2,cy:y+.12,r:.115,fill:'#46bed7',stroke:'#183149',
+                        'stroke-width':2,'vector-effect':'non-scaling-stroke',
+                        'data-fp-handle':'rotate',
+                    });
+                    turn.style.cursor='grab';
                 }
             }
         });
@@ -471,9 +684,19 @@ export class RadarFloorplanEditor {
         this.$('fp-meters').textContent=`${plan.width} × ${plan.height} m · ${plan.items.length} elementi · ${this.host.state.mapGroup||'default'}`;
         this.$('fp-undo').disabled=!this.history.length;
         this.$('fp-delete').disabled=this.selected<0;
+        this.$('fp-stage-delete').disabled=this.selected<0;
+        this.$('fp-stage-left').disabled=this.selected<0;
+        this.$('fp-stage-right').disabled=this.selected<0;
+        this.$('fp-stage-select').classList.toggle('active',this.tool==='select');
+        this.$('fp-select-mode').classList.toggle('active',this.tool==='select');
+        this.$('fp-select-mode').setAttribute('aria-pressed',String(this.tool==='select'));
         this.$('fp-save').disabled=!this.dirty && !!this.saved;
         const item=plan.items[this.selected], box=this.$('fp-selection');
         box.classList.toggle('fp-hidden',!item);
+        this.$('fp-duplicate').disabled=!item || plan.items.length>=120;
+        this.$('fp-turn-left').disabled=!item;
+        this.$('fp-turn-right').disabled=!item;
+        this.$('fp-label-rotation').classList.toggle('fp-hidden',!item||SEGMENTS.has(item.kind));
         if (item) {
             const seg=SEGMENTS.has(item.kind);
             const keys=seg?['x1','y1','x2','y2']:['x','y','w','h'];
@@ -484,6 +707,7 @@ export class RadarFloorplanEditor {
                 this.$(ids[i]).value=this._round(item[keys[i]]);
                 this.$(['fp-label-x','fp-label-y','fp-label-w','fp-label-h'][i]).firstChild.textContent=labels[i];
             }
+            if(!seg) this.$('fp-item-rotation').value=this._round(this._angle(item));
         }
     }
     async save() {

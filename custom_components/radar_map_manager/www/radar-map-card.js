@@ -1,7 +1,8 @@
-import { RadarMath } from './radar-math.js?v=lite-1';
-import { RadarUI } from './radar-ui.js?v=lite-1';
-import { RadarRenderer } from './radar-renderer.js?v=lite-1';
-import { RadarEditor } from './radar-editor.js?v=lite-1';
+import { RadarMath } from './radar-math.js?v=lite-2';
+import { RadarUI } from './radar-ui.js?v=lite-2';
+import { RadarRenderer } from './radar-renderer.js?v=lite-2';
+import { RadarEditor } from './radar-editor.js?v=lite-2';
+import { RadarFloorplanEditor } from './radar-floorplan-editor.js?v=lite-2';
 const CARD_I18N = {
     "proxy_ok": { "zh": "[RMM VIP] 雷达 {0} 代理认证成功！专属高频点云已通过 HA 隧道激活。", "en": "[RMM VIP] Radar {0} proxy auth successful! Exclusive high-frequency point cloud activated via HA tunnel." },
     "proxy_fail": { "zh": "[RMM VIP] 代理中继连接失败 ({0})，已静默降级为 MQTT 模式。", "en": "[RMM VIP] Proxy relay connection failed ({0}), silently downgraded to MQTT mode." }
@@ -14,6 +15,7 @@ class RadarMapCardNative extends HTMLElement {
         this.ui = new RadarUI(this.shadowRoot);
         this.renderer = new RadarRenderer(this.math, this.shadowRoot);
         this.editor = new RadarEditor(this, this.shadowRoot, this.math, this.ui, this.renderer);
+        this.floorplanEditor = new RadarFloorplanEditor(this, this.shadowRoot);
         this.state = {
             editMode: 'zone',
             editing: false,
@@ -107,6 +109,7 @@ class RadarMapCardNative extends HTMLElement {
         this.state.mapGroup = config.map_group || "default";
         if (this.isCreated) return;
         this.ui.render(this.state, this.config);
+        this.floorplanEditor.mount();
         this.isCreated = true;
         const root = this.shadowRoot.getElementById('root');
         if (root) this.resizeObserver.observe(root);
@@ -255,6 +258,7 @@ class RadarMapCardNative extends HTMLElement {
         const mapGroup = this.state.mapGroup;
         const v1Data = {};
         const mapData = (v2Data.maps && v2Data.maps[mapGroup]) || {};
+        this.floorplanEditor.setFloorplan(mapData.floorplan || null);
         v1Data.global_zones = mapData.zones || { include_zones: [], exclude_zones: [] };
         v1Data.global_config = mapData.config || { update_interval: 0.1, merge_distance: 0.8 };
         this.state.fused_targets = mapData.targets || []; 

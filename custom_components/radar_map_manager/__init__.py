@@ -104,7 +104,7 @@ async def _register_frontend(hass: HomeAssistant) -> None:
     await hass.http.async_register_static_paths(
         [StaticPathConfig("/radar_map_manager", www_path, cache_headers=False)]
     )
-    add_extra_js_url(hass, "/radar_map_manager/radar-map-card.js?v=lite-2")
+    add_extra_js_url(hass, "/radar_map_manager/radar-map-card.js?v=lite-3")
     domain_data["frontend_registered"] = True
 
 

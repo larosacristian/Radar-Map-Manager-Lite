@@ -56,6 +56,10 @@ UPDATE_LAYOUT_SCHEMA = vol.Schema({
 UPDATE_MAP_CONFIG_SCHEMA = vol.Schema(
     {vol.Required("map_group"): NAME}, extra=vol.ALLOW_EXTRA
 )
+UPDATE_FLOORPLAN_SCHEMA = vol.Schema({
+    vol.Required("map_group"): NAME,
+    vol.Required("floorplan"): dict,
+})
 IMPORT_SCHEMA = vol.Schema({
     vol.Required("config_json"): cv.string,
     vol.Optional("map_group", default="default"): NAME,
@@ -100,7 +104,7 @@ async def _register_frontend(hass: HomeAssistant) -> None:
     await hass.http.async_register_static_paths(
         [StaticPathConfig("/radar_map_manager", www_path, cache_headers=False)]
     )
-    add_extra_js_url(hass, "/radar_map_manager/radar-map-card.js?v=lite-1")
+    add_extra_js_url(hass, "/radar_map_manager/radar-map-card.js?v=lite-2")
     domain_data["frontend_registered"] = True
 
 
@@ -184,6 +188,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await coordinator.async_update_map_config(map_group, config_data)
         await processor.update(force=True)
 
+    async def handle_floorplan(call: ServiceCall):
+        try:
+            await coordinator.async_update_floorplan(
+                call.data["map_group"], call.data["floorplan"]
+            )
+        except ValueError as exc:
+            raise vol.Invalid(str(exc)) from exc
+        await processor.update(force=True)
+
     async def handle_import(call: ServiceCall):
         raw = call.data["config_json"]
         if len(raw) > 200_000:
@@ -223,6 +236,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "update_radar_zone": (handle_zone, UPDATE_ZONE_SCHEMA),
         "update_radar_layout": (handle_layout, UPDATE_LAYOUT_SCHEMA),
         "update_map_config": (handle_map_config, UPDATE_MAP_CONFIG_SCHEMA),
+        "update_floorplan": (handle_floorplan, UPDATE_FLOORPLAN_SCHEMA),
         "import_config": (handle_import, IMPORT_SCHEMA),
         "reset_tracking_history": (handle_reset, vol.Schema({})),
         "generate_radar_config": (handle_generate, vol.Schema({})),

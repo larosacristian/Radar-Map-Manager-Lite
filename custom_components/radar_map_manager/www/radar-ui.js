@@ -498,6 +498,7 @@ export class RadarUI {
             container.style.touchAction = "none";
             container.innerHTML = `
                 <div id="map-container"></div>
+                <svg id="floorplan-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
                 <svg id="svg-canvas" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
                 <canvas id="rmm-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></canvas>
                 <div id="dots-layer"></div>
@@ -507,6 +508,7 @@ export class RadarUI {
                     <span id="fall-banner-text">跌倒警报！</span>
                 </div>
                 <div id="ws-status-dot" title="Connecting..." style="position: absolute; top: 12px; right: 40px; width: 10px; height: 10px; border-radius: 50%; background: #ffc107; box-shadow: 0 0 5px #ffc107; z-index: 5; transition: background 0.3s;"></div>
+                <button id="btn-floorplan-editor" title="Disegna stanza e mobili" aria-label="Apri editor piantina">🏠</button>
                 <button id="btn-toggle-mode" title="Toggle Edit Mode">⚙️</button>
             `;
             this.root.appendChild(container);
@@ -546,6 +548,8 @@ export class RadarUI {
         const btnToggle = this.root.getElementById('btn-toggle-mode');
         if (config && config.read_only && btnToggle) {
             btnToggle.style.display = 'none';
+            const btnFloorplan = this.root.getElementById('btn-floorplan-editor');
+            if (btnFloorplan) btnFloorplan.style.display = 'none';
         }
     }
     injectStyles() {
@@ -564,6 +568,7 @@ export class RadarUI {
                 100% { transform: translateX(-50%) scale(1); }
             }
             #svg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+            #floorplan-layer { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
             .zone-poly { cursor: pointer; transition: fill-opacity 0.2s; }
             .zone-handle { cursor: move; }
             .radar-handle-body { cursor: move; }
@@ -638,6 +643,8 @@ export class RadarUI {
             .scroll-area::-webkit-scrollbar-thumb { background: #666; border-radius: 2px; }
             .scroll-area::-webkit-scrollbar-thumb:hover { background: #888; }
             #btn-toggle-mode { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; color: rgba(255, 255, 255, 0.7); font-size: 14px; cursor: pointer; z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: auto; transition: all 0.2s; }
+            #btn-floorplan-editor { position: absolute; top: 8px; right: 74px; width: 30px; height: 24px; background: rgba(5, 89, 113, 0.8); border: 1px solid rgba(135, 231, 254, 0.8); border-radius: 9999px; color: white; font-size: 14px; cursor: pointer; z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: auto; }
+            #btn-floorplan-editor:hover { background: #0b86ad; }
             #btn-toggle-mode:hover { background: rgba(33, 150, 243, 0.8); color: white; border-color: #2196F3; }
             #btn-toggle-mode.active { background: #b71c1c; color: white; border-color: #ff5252; }
             .separator { height: 1px; background: #333; margin: 4px 0; }

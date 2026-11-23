@@ -111,6 +111,22 @@ import_config:
       selector:
         text:
 
+update_floorplan:
+  name: Save room floor plan
+  description: "Store local room dimensions, walls, doors, windows and furniture. No radar hardware commands."
+  fields:
+    map_group:
+      name: Map group
+      required: true
+      default: default
+      selector:
+        text:
+    floorplan:
+      name: Room plan
+      required: true
+      selector:
+        object:
+
 reset_tracking_history:
   name: Reset target tracking history
 
